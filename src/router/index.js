@@ -12,12 +12,11 @@ const routes = [
   },
   {
     path: '/categories',
-    name: 'categories',
     component: () => import('@/pages/categories/index.vue'),
     children: [
       {
         path: '',
-        name: 'categories-all',
+        name: 'categories',
         component: () => import('@/pages/categories/all.vue')
       },
       {
@@ -32,6 +31,12 @@ const routes = [
         component: () => import('@/pages/categories/add-edit.vue')
       }
     ]
+  },
+  {
+    path: '/parameters/:id',
+    name: 'parameters',
+    props: true,
+    component: () => import('@/pages/parameters/index.vue')
   }
 ]
 

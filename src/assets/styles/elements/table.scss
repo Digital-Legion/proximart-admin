@@ -1,13 +1,15 @@
 .g-table {
   position: relative;
 
-  .el-table__expanded-cell {
-    padding: 0 20px;
-    background: gray !important;
+  &__actions {
+    display: flex;
+    align-items: center;
 
-    .el-table {
-      th, tr {
-        background: #fafafa !important;
+    &-item {
+      margin-right: 5px;
+
+      &:last-child {
+        margin-right: 0;
       }
     }
   }

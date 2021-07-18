@@ -12,35 +12,30 @@ export default {
   mutations: {
     setCategories (state, payload) {
       state.categories = payload
-      state.categories.items = state.categories.items.map(c => ({
-        ...c,
-        children: 'to-be-checked'
-      }))
+      state.categories.items.push({})
+      state.categories.items.pop()
     },
 
-    addToCategories (state, { data, parentId }) {
-      const parentIndex = state.categories?.items?.findIndex(c => c.id === parentId)
-      if (parentIndex >= 0) {
-        const items = data.items[0].children.map(c => ({
-          ...c,
-          children: 'to-be-checked'
-        }))
-        if (typeof state.categories.items[parentIndex].children === 'object' && state.categories.items[parentIndex].children.length)
-          state.categories.items[parentIndex].children.push(items)
-        else state.categories.items[parentIndex].children = items
-      } else {
-        console.error(`Tried to find parent index with id ${parentId}`)
-      }
+    addToCategories (state, payload) {
+      state.categories.meta = payload.meta
+      state.categories.items = [...state.categories.items, ...payload.items]
     },
 
     setCascaderCategories (state, payload) {
       state.cascaderCategories = payload
+    },
+
+    removeCategoryById (state, id) {
+      const categoryIndex = state.categories.items.findIndex(c => c.id === id)
+      if (categoryIndex !== -1) {
+        state.categories.items.splice(categoryIndex, 1)
+      }
     }
   },
 
   actions: {
     fetchCategories ({ commit, state }, { page, parentId }) {
-      if (parentId === undefined) {
+      if (typeof parentId !== 'string') {
         axios.get(`/category?page=${page}&limit=${state.limit}`)
           .then(res => {
             commit('setCategories', res.data)
@@ -51,10 +46,11 @@ export default {
       } else {
         axios.get(`/category/children/${parentId}?page=${page}&limit=${state.limit}`)
           .then(res => {
-            commit('addToCategories', {
-              data: res.data,
-              parentId
-            })
+            if (page === 1) {
+              commit('setCategories', res.data)
+            } else {
+              commit('addToCategories', res.data)
+            }
           })
           .catch(e => {
             console.error(e)
@@ -111,6 +107,18 @@ export default {
         axios.put(`/category/${data.id}`, formData)
           .then(res => {
             resolve(res)
+          })
+          .catch(e => {
+            reject(e)
+          })
+      })
+    },
+
+    removeCategory ({ commit }, id) {
+      return new Promise((resolve, reject) => {
+        axios.delete(`/category/${id}`)
+          .then(() => {
+            commit('removeCategoryById', id)
           })
           .catch(e => {
             reject(e)

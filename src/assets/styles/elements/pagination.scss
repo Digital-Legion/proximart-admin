@@ -1,0 +1,36 @@
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0 40px;
+
+  button {
+    background: none;
+    border: none;
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+    line-height: 130%;
+    margin: 0 5px;
+    padding: 5px 10px;
+    color: #2c3e50;
+    border-radius: 50%;
+
+    &:focus {
+      outline: none;
+    }
+  }
+
+  &__content {
+    display: flex;
+  }
+
+  &__button {
+    &.current {
+      color: white;
+      background: #2c3e50;
+    }
+  }
+}

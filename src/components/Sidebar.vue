@@ -14,7 +14,7 @@
         <nav class="g-sidebar__nav">
           <ul @click="hideMobileMenu">
             <li>
-              <router-link to="/categories" class="g-sidebar__nav-item">
+              <router-link to="/categories" class="g-sidebar__nav-item" :class="{'router-link-exact-active': $route.path.startsWith('/categories')}">
                 <font-awesome-icon icon="book-open" class="g-sidebar__nav-icon" />
                 <span>Categories</span>
               </router-link>
