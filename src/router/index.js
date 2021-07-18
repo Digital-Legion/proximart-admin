@@ -6,8 +6,32 @@ Vue.use(VueRouter)
 const routes = [
   {
     path: '/',
-    name: 'index',
-    component: () => import('@/pages/index.vue')
+    redirect: '/categories'
+    // name: 'index',
+    // component: () => import('@/pages/index.vue')
+  },
+  {
+    path: '/categories',
+    name: 'categories',
+    component: () => import('@/pages/categories/index.vue'),
+    children: [
+      {
+        path: '',
+        name: 'categories-all',
+        component: () => import('@/pages/categories/all.vue')
+      },
+      {
+        path: 'add',
+        name: 'categories-add',
+        component: () => import('@/pages/categories/add-edit.vue')
+      },
+      {
+        path: ':id',
+        name: 'categories-edit',
+        props: true,
+        component: () => import('@/pages/categories/add-edit.vue')
+      }
+    ]
   }
 ]
 

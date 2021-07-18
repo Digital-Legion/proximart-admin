@@ -1,0 +1,14 @@
+.g-table {
+  position: relative;
+
+  .el-table__expanded-cell {
+    padding: 0 20px;
+    background: gray !important;
+
+    .el-table {
+      th, tr {
+        background: #fafafa !important;
+      }
+    }
+  }
+}

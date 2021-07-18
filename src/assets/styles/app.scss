@@ -1,10 +1,11 @@
-*,
-*:before,
-*:after {
+/* just in case, you like to change theme color */
+$--color-primary: $turquoise;
+
+* {
   padding: 0;
   margin: 0;
   box-sizing: border-box;
-  font-family: 'Manrope', sans-serif !important;
+  font-family: 'Manrope', sans-serif;
 }
 
 body {
@@ -15,6 +16,11 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background: #fdfdfd;
+}
+
+svg {
+  outline: none;
 }
 
 a {
@@ -46,12 +52,13 @@ li {
   list-style: none;
 }
 
-input {
+input, textarea {
   border: none;
   outline: none;
   border-radius: 0;
+  resize: none;
 
   &::placeholder {
-    color: #a9a9a9;
+    color: #a9a9a9 !important;
   }
 }

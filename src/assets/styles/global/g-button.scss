@@ -1,0 +1,71 @@
+.g-button {
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  background: #fff;
+  border: 1px solid #d8dce5;
+  color: #5a5e66;
+  text-align: center;
+  box-sizing: border-box;
+  outline: 0;
+  margin: 0;
+  transition: .2s;
+  padding: 12px;
+  border-radius: 100px;
+  display: flex;
+  align-items: center;
+
+  svg {
+    width: 16px !important;
+    height: 16px !important;
+
+    path {
+      fill: #5a5e66;
+      transition: .2s;
+    }
+  }
+
+  span {
+    display: block;
+    margin-left: 8px;
+    color: #5a5e66;
+    font-size: 16px;
+    line-height: 100%;
+    transition: .2s;
+  }
+
+  &:hover {
+    border-color: $turquoise-dark;
+    background: $turquoise-dark;
+
+    svg {
+      path {
+        fill: #fff;
+      }
+    }
+
+    span {
+      color: #fff;
+    }
+  }
+
+  &:disabled {
+    border-color: #a9a9a9 !important;
+    background: $gray !important;
+    cursor: not-allowed;
+
+    span {
+      color: #a9a9a9 !important;
+    }
+
+    svg {
+      path {
+        fill: #a9a9a9 !important;
+      }
+    }
+  }
+
+  &--icon {
+    border-radius: 50%;
+  }
+}
