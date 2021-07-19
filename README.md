@@ -1,4 +1,4 @@
-# proximart-front
+# proximart-admin
 
 ## Project setup
 ```
