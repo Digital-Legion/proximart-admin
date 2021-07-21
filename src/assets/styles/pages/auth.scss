@@ -1,0 +1,43 @@
+.auth-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+
+  &__box {
+    max-width: 320px;
+    margin-left: 20px;
+    margin-right: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  &__header {
+    position: fixed;
+    top: 30px;
+    left: 30px;
+    right: 30px;
+    display: flex;
+    justify-content: center;
+
+    svg {
+      width: 300px;
+      height: auto;
+      object-fit: contain;
+    }
+  }
+
+  &__submit {
+    width: 100%;
+    background: #111111;
+
+    span {
+      width: 100%;
+      display: block;
+      text-align: center;
+      text-transform: uppercase;
+      font-weight: 600;
+      color: #fff;
+    }
+  }
+}

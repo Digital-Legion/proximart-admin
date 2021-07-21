@@ -48,6 +48,14 @@
     overflow-x: hidden;
   }
 
+  &__sign-out {
+    margin-left: auto;
+    color: $red;
+    font-size: 14px;
+    line-height: 1;
+    font-weight: 600;
+  }
+
   &__nav {
     &-icon {
       min-width: 20px;
@@ -72,7 +80,7 @@
       align-items: center;
       margin-bottom: 5px;
 
-      &:hover, &.router-link-exact-active {
+      &:hover:not(.g-sidebar__nav-item--no-hover), &.router-link-exact-active {
         color: $cyan;
         background: $turquoise;
         border-radius: 16px;

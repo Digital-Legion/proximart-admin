@@ -14,9 +14,34 @@
         <nav class="g-sidebar__nav">
           <ul @click="hideMobileMenu">
             <li>
+              <div class="g-sidebar__nav-item g-sidebar__nav-item--no-hover mb-20">
+                <font-awesome-icon icon="user-circle" class="g-sidebar__nav-icon" />
+                <span>{{ profile ? profile.name : '' }}</span>
+                <button class="g-sidebar__sign-out" @click="signOut">Sign out</button>
+              </div>
+            </li>
+            <li>
               <router-link to="/categories" class="g-sidebar__nav-item" :class="{'router-link-exact-active': $route.path.startsWith('/categories')}">
-                <font-awesome-icon icon="book-open" class="g-sidebar__nav-icon" />
+                <font-awesome-icon :icon="['fab', 'cuttlefish']" class="g-sidebar__nav-icon" />
                 <span>Categories</span>
+              </router-link>
+            </li>
+            <li>
+              <router-link to="/brands" class="g-sidebar__nav-item" :class="{'router-link-exact-active': $route.path.startsWith('/brands')}">
+                <font-awesome-icon icon="bold" class="g-sidebar__nav-icon" />
+                <span>Brands</span>
+              </router-link>
+            </li>
+            <li>
+              <router-link to="/colors" class="g-sidebar__nav-item" :class="{'router-link-exact-active': $route.path.startsWith('/colors')}">
+                <font-awesome-icon icon="palette" class="g-sidebar__nav-icon" />
+                <span>Colors</span>
+              </router-link>
+            </li>
+            <li>
+              <router-link to="/products" class="g-sidebar__nav-item" :class="{'router-link-exact-active': $route.path.startsWith('/products')}">
+                <font-awesome-icon :icon="['fab', 'product-hunt']" class="g-sidebar__nav-icon" />
+                <span>Products</span>
               </router-link>
             </li>
           </ul>
@@ -31,6 +56,7 @@
 
 <script>
 import IsMobile from '@/mixins/IsMobile'
+import { mapMutations, mapState } from 'vuex'
 
 export default {
   name: 'Sidebar',
@@ -50,7 +76,13 @@ export default {
     window.addEventListener('resize', this.onResize)
   },
 
+  computed: {
+    ...mapState('auth', ['profile'])
+  },
+
   methods: {
+    ...mapMutations('auth', ['signOut']),
+
     toggleMenu () {
       this.menuOpen = !this.menuOpen
     },

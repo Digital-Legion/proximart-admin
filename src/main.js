@@ -12,7 +12,8 @@ import './assets/styles/common.scss'
 import axios from 'axios'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faBookOpen, faPlus, faSave, faBan, faEdit, faTrash, faSitemap, faCubes } from '@fortawesome/free-solid-svg-icons'
+import { faCopyright, faPlus, faSave, faBan, faEdit, faTrash, faSitemap, faCubes, faBold, faPalette, faUserCircle } from '@fortawesome/free-solid-svg-icons'
+import { faCuttlefish, faProductHunt } from '@fortawesome/free-brands-svg-icons'
 import PhoneMaskInput from 'vue-phone-mask-input'
 import TextareaAutosize from 'vue-textarea-autosize'
 import Element from 'element-ui'
@@ -22,7 +23,7 @@ import Toasted from 'vue-toasted'
 import 'vue-loading-overlay/dist/vue-loading.css'
 import VueLoading from 'vue-loading-overlay'
 
-library.add(faBookOpen, faPlus, faSave, faBan, faEdit, faTrash, faSitemap, faCubes)
+library.add(faCopyright, faPlus, faSave, faBan, faEdit, faTrash, faSitemap, faCubes, faCuttlefish, faBold, faPalette, faUserCircle, faProductHunt)
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 Vue.component('phone-mask-input', PhoneMaskInput)
 Vue.component('loading', VueLoading)
@@ -37,6 +38,27 @@ Vue.use(Toasted, {
 Vue.config.productionTip = false
 
 axios.defaults.baseURL = process.env.VUE_APP_API_URL || ''
+
+// add auth token in request
+axios.interceptors.request.use(function (config) {
+  // Do something before request is sent, like we're inserting a timeout for only requests with a particular baseURL
+  const token = localStorage.getItem('token')
+  if (token)
+    config.headers.Authorization = `Bearer ${token}`
+  return config
+}, function (error) {
+  // Do something with request error
+  return Promise.reject(error)
+})
+
+// handle no token error in response
+axios.interceptors.response.use(function (response) {
+  if (response.status === 401) {
+    localStorage.removeItem('token')
+    router.push('/auth').catch(() => {})
+  }
+  return response
+})
 
 new Vue({
   router,

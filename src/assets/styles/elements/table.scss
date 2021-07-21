@@ -13,4 +13,16 @@
       }
     }
   }
+
+  &__color {
+    width: 32px;
+    height: 32px;
+    border-radius: 4px;
+    margin-right: 8px;
+  }
+
+  &__cell {
+    display: flex;
+    align-items: center;
+  }
 }

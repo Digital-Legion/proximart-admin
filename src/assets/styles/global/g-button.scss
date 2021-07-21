@@ -37,7 +37,10 @@
   &:hover {
     border-color: $turquoise-dark;
     background: $turquoise-dark;
-    color: white;
+
+    span {
+      color: white;
+    }
 
     svg {
       path {

@@ -29,11 +29,16 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      position: relative;
     }
 
     &--textarea {
       padding-top: 11px;
       padding-bottom: 11px;
+    }
+
+    &--password {
+      padding-right: 35px;
     }
   }
 
@@ -47,6 +52,15 @@
     .max {
       opacity: .75;
     }
+  }
+
+  &__password-eye {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    z-index: 1;
+    transform: translateY(-50%);
+    cursor: pointer;
   }
 
   .phone-mask-wrapper-lib {

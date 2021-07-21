@@ -29,6 +29,7 @@ export default {
       const categoryIndex = state.categories.items.findIndex(c => c.id === id)
       if (categoryIndex !== -1) {
         state.categories.items.splice(categoryIndex, 1)
+        state.categories.meta.totalItems--
       }
     }
   },
@@ -119,6 +120,7 @@ export default {
         axios.delete(`/category/${id}`)
           .then(() => {
             commit('removeCategoryById', id)
+            resolve()
           })
           .catch(e => {
             reject(e)

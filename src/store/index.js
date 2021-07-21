@@ -2,14 +2,22 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 
 import categories from '@/store/categories'
+import brands from '@/store/brands'
+import colors from '@/store/colors'
+import products from '@/store/products'
 import parameters from '@/store/parameters'
+import auth from '@/store/auth'
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
   modules: {
     categories,
-    parameters
+    brands,
+    colors,
+    products,
+    parameters,
+    auth
   },
 
   state: {

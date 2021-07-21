@@ -31,7 +31,7 @@ export default {
       type: String,
       default: 'Upload'
     },
-    imageSrc: {
+    imgSrc: {
       type: String
     }
   },
@@ -46,6 +46,7 @@ export default {
     imgSrc: {
       immediate: true,
       handler () {
+        console.log(this.imgSrc)
         this.image = this.imgSrc
       }
     }
