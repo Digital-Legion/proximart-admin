@@ -1,5 +1,5 @@
 <template>
-  <div class="categories-add-edit-page">
+  <div class="add-edit-page">
     <loading
       :active.sync="loading"
       :can-cancel="false"
@@ -12,14 +12,14 @@
         <span>Save</span>
         <span v-if="dataUpdated"> (autosave in {{ timeLeftToUpdate }})</span>
       </button>
-      <router-link class="g-button" to="/categories">
+      <router-link class="g-button" to="/products">
         <font-awesome-icon icon="ban" />
         <span>Cancel</span>
       </router-link>
     </page-header>
     <page-tabs @input="setActiveLang" :value="activeLang" :options="filteredLangs" />
     <page-box :double="true">
-      <div class="categories-add-edit-page__left">
+      <div class="add-edit-page__left">
         <custom-input
           v-model="name"
           @input="onNameInput"
@@ -62,27 +62,41 @@
           label="Slug (all languages)"
         />
         <custom-cascader
-          :value="parent ? (parent.id ? parent.id.toString() : parent.toString()) : null"
-          @set-value="onParentSelect"
+          :value="category"
+          @set-value="onCategorySelect"
           :options="cascaderCategories"
-          label="Parent category (all languages)"
+          label="Category (all languages)"
           placeholder="Select category (or leave it empty)"
         />
       </div>
-      <div class="categories-add-edit-page__right">
-        <DropImage
-          label="Image (all languages)"
-          placeholder="Select image"
-          :img-src="image"
-          @set-image-src="image = $event"
-          @set-image="imageFile = $event; image = ''"
+      <div class="add-edit-page__right">
+        <custom-input
+          v-model="price"
+          type="number"
+          placeholder="Enter price"
           class="mb-20"
+          label="Price (all languages)"
         />
         <custom-input
-          v-model="alt"
-          @input="altError = ''"
-          placeholder="Enter image's alt"
-          label="Alt (all languages)"
+          v-model="stock"
+          type="number"
+          placeholder="Enter stock"
+          class="mb-20"
+          label="Stock (all languages)"
+        />
+        <custom-input
+          v-model="discount"
+          type="number"
+          placeholder="Enter discount"
+          class="mb-20"
+          label="Discount (all languages)"
+        />
+        <custom-select
+          :value="brand"
+          @set-value="brand = $event"
+          :options="allBrands"
+          label="Brand"
+          placeholder="Select brand"
         />
       </div>
     </page-box>
@@ -91,7 +105,6 @@
 
 <script>
 import { mapState, mapMutations, mapActions } from 'vuex'
-import DropImage from '@/components/DropImage'
 import { debounce } from '@/utils/debounce'
 const slugify = require('slugify')
 
@@ -99,12 +112,13 @@ export default {
   name: 'CategoriesAddEdit',
 
   components: {
-    DropImage,
+    // DropImage: () => import('@/components/DropImage'),
     PageHeader: () => import('@/components/PageHeader'),
     PageTabs: () => import('@/components/PageTabs'),
     PageBox: () => import('@/components/PageBox'),
     CustomInput: () => import('@/components/CustomInput'),
-    CustomCascader: () => import('@/components/CustomCascader')
+    CustomCascader: () => import('@/components/CustomCascader'),
+    CustomSelect: () => import('@/components/CustomSelect')
   },
 
   data () {
@@ -113,13 +127,16 @@ export default {
       nameAz: '',
       description: '',
       descriptionAz: '',
-      alt: '',
       slug: '',
-      parent: null,
-      image: null,
-      imageFile: null,
+      price: '',
+      stock: '',
+      discount: '',
+      category: null,
+      brand: null,
 
-      slugBasedOnName: true,
+      image: null,
+      alt: '',
+      imageFile: null,
 
       nameError: '',
       nameAzError: '',
@@ -128,6 +145,8 @@ export default {
       slugError: '',
       imageError: '',
       altError: '',
+
+      slugBasedOnName: true,
 
       wait: false,
       loading: false,
@@ -140,28 +159,31 @@ export default {
 
   async created () {
     await this.fetchCascaderCategories()
+    await this.fetchAllBrands()
   },
 
   async mounted () {
-    if (this.categoryId) {
+    if (this.productId) {
       this.loading = true
-      await this.fetchCategory(this.categoryId)
+      await this.fetchProduct(this.productId)
         .then(({ data }) => {
           this.name = data.name
           this.nameAz = data.name__az
           this.description = data.description
           this.descriptionAz = data.description__az
-          this.alt = data.image?.alt ?? ''
           this.slug = data.slug
-          this.image = data.image?.url ?? ''
-          this.parent = data.parent
+          this.price = data.price
+          this.stock = data.stock
+          this.discount = data.discount
+          this.category = data.category?.id ?? null
+          this.brand = data.brand
 
           this.slugBasedOnName = this.slug === ''
         })
         .catch(e => {
           console.error(e)
           this.$toasted.error(e.response.data.message)
-          this.$router.push('/categories')
+          this.$router.push('/products')
         })
       this.loading = false
     }
@@ -173,11 +195,15 @@ export default {
       vm.description,
       vm.descriptionAz,
       vm.slug,
+      vm.price,
+      vm.stock,
+      vm.discount,
       vm.alt,
       vm.imageFile,
-      vm.parent
+      vm.category,
+      vm.brand
     ], () => {
-      if (this.categoryId)
+      if (this.productId)
         this.dataUpdate()
     })
   },
@@ -185,12 +211,13 @@ export default {
   computed: {
     ...mapState(['activeLang', 'langs']),
     ...mapState('categories', ['cascaderCategories']),
+    ...mapState('products', ['allBrands']),
 
     pageTitle () {
-      return this.categoryId ? `Editing category ${this.slug ?? 'with id ' + this.categoryId}` : 'Creating a new category'
+      return this.productId ? `Editing product ${this.name ?? 'with id ' + this.productId}` : 'Something went wrong'
     },
 
-    categoryId () {
+    productId () {
       return this.$route.params.id
     },
 
@@ -224,7 +251,8 @@ export default {
 
   methods: {
     ...mapMutations(['setActiveLang']),
-    ...mapActions('categories', ['fetchCascaderCategories', 'createCategory', 'fetchCategory', 'updateCategory']),
+    ...mapActions('categories', ['fetchCascaderCategories']),
+    ...mapActions('products', ['updateProduct', 'fetchProduct', 'fetchAllBrands']),
 
     dataUpdate () {
       this.dataUpdated = true
@@ -232,8 +260,8 @@ export default {
       this.onDataUpdate()
     },
 
-    onParentSelect (parent) {
-      this.parent = parent
+    onCategorySelect (category) {
+      this.category = category
     },
 
     onDataUpdate: (debounce(function () {
@@ -254,47 +282,36 @@ export default {
       }, 1000)
     },
 
-    async submit (redirect) {
+    async submit () {
       const data = {
         name: this.name,
         name__az: this.nameAz,
         description: this.description,
         description__az: this.descriptionAz,
         slug: this.slug,
-        alt: this.alt
+        price: parseFloat(this.price ? this.price : '0'),
+        stock: parseInt(this.stock ? this.stock : '0'),
+        discount: parseFloat(this.discount ? this.discount : '0'),
+        brand: this.brand,
+        id: parseInt(this.productId)
       }
 
-      if (this.parent)
-        data.parent = this.parent.id ?? this.parent
+      if (this.category)
+        data.category = this.category
 
       if (this.imageFile)
         data.file = this.imageFile
 
       this.wait = true
 
-      if (!this.categoryId) {
-        await this.createCategory(data)
-          .then(() => {
-            if (redirect)
-              this.$router.push('/categories')
-            this.$toasted.success('The category was successfully created')
-          })
-          .catch(e => {
-            console.error(e)
-            this.$toasted.error(e.response.data.message)
-          })
-      } else {
-        data.id = this.categoryId
-
-        await this.updateCategory(data)
-          .then(() => {
-            this.$toasted.success('The category was successfully updated')
-          })
-          .catch(e => {
-            console.error(e)
-            this.$toasted.error(e.response.data.message)
-          })
-      }
+      await this.updateProduct(data)
+        .then(() => {
+          this.$toasted.success('The product was successfully updated')
+        })
+        .catch(e => {
+          console.error(e)
+          this.$toasted.error(e.response.data.message)
+        })
 
       this.dataUpdated = false
       this.wait = false
@@ -320,7 +337,7 @@ export default {
 
     onSlugInput () {
       this.slugError = ''
-      this.slugBasedOnName = false
+      this.slugBasedOnName = this.slug === ''
       this.slug = slugify(this.slug).toLowerCase()
     }
   },
@@ -335,5 +352,5 @@ export default {
 </script>
 
 <style lang="scss">
-@import '@/assets/styles/pages/categories/add-edit.scss';
+@import '@/assets/styles/pages/add-edit.scss';
 </style>

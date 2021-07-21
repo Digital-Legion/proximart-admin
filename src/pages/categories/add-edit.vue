@@ -1,5 +1,5 @@
 <template>
-  <div class="categories-add-edit-page">
+  <div class="add-edit-page">
     <loading
       :active.sync="loading"
       :can-cancel="false"
@@ -19,7 +19,7 @@
     </page-header>
     <page-tabs @input="setActiveLang" :value="activeLang" :options="filteredLangs" />
     <page-box :double="true">
-      <div class="categories-add-edit-page__left">
+      <div class="add-edit-page__left">
         <custom-input
           v-model="name"
           @input="onNameInput"
@@ -69,7 +69,7 @@
           placeholder="Select category (or leave it empty)"
         />
       </div>
-      <div class="categories-add-edit-page__right">
+      <div class="add-edit-page__right">
         <DropImage
           label="Image (all languages)"
           placeholder="Select image"
@@ -320,7 +320,7 @@ export default {
 
     onSlugInput () {
       this.slugError = ''
-      this.slugBasedOnName = false
+      this.slugBasedOnName = this.slug === ''
       this.slug = slugify(this.slug).toLowerCase()
     }
   },
@@ -335,5 +335,5 @@ export default {
 </script>
 
 <style lang="scss">
-@import '@/assets/styles/pages/categories/add-edit.scss';
+@import '@/assets/styles/pages/add-edit.scss';
 </style>

@@ -22,7 +22,7 @@ export default {
       default: () => []
     },
     value: {
-      type: String
+      default: null
     },
     placeholder: {
       type: String,

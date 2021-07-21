@@ -5,6 +5,7 @@ export default {
 
   state: {
     products: null,
+    allBrands: [],
     limit: 12
   },
 
@@ -26,6 +27,10 @@ export default {
         state.products.items.splice(brandIndex, 1)
         state.products.meta.totalItems--
       }
+    },
+
+    setAllBrands (state, payload) {
+      state.allBrands = payload
     }
   },
 
@@ -89,6 +94,16 @@ export default {
             reject(e)
           })
       })
+    },
+
+    fetchAllBrands ({ commit }) {
+      axios.get('/brand?page=1&limit=99999')
+        .then(res => {
+          commit('setAllBrands', res.data?.items ?? [])
+        })
+        .catch(e => {
+          console.error(e)
+        })
     }
   }
 }

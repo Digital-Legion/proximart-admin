@@ -1,5 +1,5 @@
 <template>
-  <div class="categories-add-edit-page">
+  <div class="add-edit-page">
     <loading
       :active.sync="loading"
       :can-cancel="false"
@@ -19,7 +19,7 @@
     </page-header>
     <page-tabs @input="setActiveLang" :value="activeLang" :options="filteredLangs" />
     <page-box :double="true">
-      <div class="categories-add-edit-page__left">
+      <div class="add-edit-page__left">
         <custom-input
           v-model="name"
           placeholder="Enter name"
@@ -35,7 +35,7 @@
           v-else-if="activeLang === 'az'"
         />
       </div>
-      <div class="categories-add-edit-page__right">
+      <div class="add-edit-page__right">
         <custom-color-picker
           v-model="color"
           label="Color (all languages)"
@@ -211,5 +211,5 @@ export default {
 </script>
 
 <style lang="scss">
-@import '@/assets/styles/pages/categories/add-edit.scss';
+@import '@/assets/styles/pages/add-edit.scss';
 </style>
