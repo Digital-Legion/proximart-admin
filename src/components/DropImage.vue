@@ -46,7 +46,6 @@ export default {
     imgSrc: {
       immediate: true,
       handler () {
-        console.log(this.imgSrc)
         this.image = this.imgSrc
       }
     }
@@ -55,6 +54,7 @@ export default {
   methods: {
     removeFile () {
       this.image = null
+      this.$emit('set', { file: '', src: '' })
       this.$emit('set-image', '')
       this.$emit('set-image-src', '')
     },
@@ -63,6 +63,7 @@ export default {
       const file = e.target.files[0]
       if (file) {
         this.image = URL.createObjectURL(file)
+        this.$emit('set', { file, src: this.image })
         this.$emit('set-image', file)
         this.$emit('set-image-src', this.image)
       }

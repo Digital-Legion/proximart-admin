@@ -6,6 +6,7 @@ export default {
   state: {
     products: null,
     allBrands: [],
+    allColors: [],
     limit: 12
   },
 
@@ -31,12 +32,15 @@ export default {
 
     setAllBrands (state, payload) {
       state.allBrands = payload
+    },
+
+    setAllColors (state, payload) {
+      state.allColors = payload
     }
   },
 
   actions: {
     fetchProducts ({ commit, state }, page) {
-      console.log(page)
       axios.get(`/product?page=${page}&limit=${state.limit}`)
         .then(res => {
           commit('setProducts', res.data)
@@ -83,6 +87,42 @@ export default {
       })
     },
 
+    createProductColor (_, data) {
+      return new Promise((resolve, reject) => {
+        axios.post('/color/product', createFormDataWithFilesNoId(data))
+          .then(res => {
+            resolve(res)
+          })
+          .catch(e => {
+            reject(e)
+          })
+      })
+    },
+
+    updateProductColor (_, data) {
+      return new Promise((resolve, reject) => {
+        axios.put(`/color/product-color/${data.id}`, createFormDataWithFilesNoId(data))
+          .then(res => {
+            resolve(res)
+          })
+          .catch(e => {
+            reject(e)
+          })
+      })
+    },
+
+    deleteProductColor (_, data) {
+      return new Promise((resolve, reject) => {
+        axios.delete(`/color/product-color/${data.id}`)
+          .then(res => {
+            resolve(res)
+          })
+          .catch(e => {
+            reject(e)
+          })
+      })
+    },
+
     removeProduct ({ commit }, id) {
       return new Promise((resolve, reject) => {
         axios.delete(`/product/${id}`)
@@ -104,6 +144,28 @@ export default {
         .catch(e => {
           console.error(e)
         })
+    },
+
+    fetchAllColors ({ commit }) {
+      axios.get('/color?page=1&limit=99999')
+        .then(res => {
+          commit('setAllColors', res.data?.items ?? [])
+        })
+        .catch(e => {
+          console.error(e)
+        })
     }
   }
+}
+
+const createFormDataWithFilesNoId = data => {
+  const formData = new FormData()
+  Object.entries(data).filter(v => v[0] !== 'id').forEach(entry => {
+    if (entry[0] === 'files') {
+      entry[1].forEach(file => {
+        formData.append(entry[0], file)
+      })
+    } else formData.append(entry[0], entry[1])
+  })
+  return formData
 }

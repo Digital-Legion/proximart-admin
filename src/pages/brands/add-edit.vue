@@ -12,7 +12,7 @@
         <span>Save</span>
         <span v-if="dataUpdated"> (autosave in {{ timeLeftToUpdate }})</span>
       </button>
-      <router-link class="g-button" to="/brands">
+      <router-link class="g-button g-button--danger" to="/brands">
         <font-awesome-icon icon="ban" />
         <span>Cancel</span>
       </router-link>
@@ -117,7 +117,7 @@ export default {
           this.alt = data.image?.alt ?? ''
           this.slug = data.slug
           this.image = data.image?.url ?? ''
-          this.categories = data.categories
+          this.categories = data.categories?.map(c => c.id) ?? null
 
           this.slugBasedOnName = this.slug === ''
         })

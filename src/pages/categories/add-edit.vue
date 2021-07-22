@@ -12,7 +12,7 @@
         <span>Save</span>
         <span v-if="dataUpdated"> (autosave in {{ timeLeftToUpdate }})</span>
       </button>
-      <router-link class="g-button" to="/categories">
+      <router-link class="g-button g-button--danger" to="/categories">
         <font-awesome-icon icon="ban" />
         <span>Cancel</span>
       </router-link>
@@ -59,7 +59,16 @@
           @input="onSlugInput"
           placeholder="Enter slug (based on the name by default)"
           class="mb-20"
-          label="Slug (all languages)"
+          label="Slug"
+          v-if="activeLang === 'ru'"
+        />
+        <custom-input
+          v-model="slugAz"
+          @input="onSlugInput"
+          placeholder="Enter slug (based on the name by default)"
+          class="mb-20"
+          label="Slug"
+          v-else-if="activeLang === 'az'"
         />
         <custom-cascader
           :value="parent ? (parent.id ? parent.id.toString() : parent.toString()) : null"
@@ -115,11 +124,13 @@ export default {
       descriptionAz: '',
       alt: '',
       slug: '',
+      slugAz: '',
       parent: null,
       image: null,
       imageFile: null,
 
       slugBasedOnName: true,
+      slugBasedOnNameAz: true,
 
       nameError: '',
       nameAzError: '',
@@ -147,16 +158,18 @@ export default {
       this.loading = true
       await this.fetchCategory(this.categoryId)
         .then(({ data }) => {
-          this.name = data.name
-          this.nameAz = data.name__az
-          this.description = data.description
-          this.descriptionAz = data.description__az
+          this.name = data.name ?? ''
+          this.nameAz = data.name__az ?? ''
+          this.description = data.description ?? ''
+          this.descriptionAz = data.description__az ?? ''
           this.alt = data.image?.alt ?? ''
-          this.slug = data.slug
+          this.slug = data.slug ?? ''
+          this.slugAz = data.slug__az ?? ''
           this.image = data.image?.url ?? ''
           this.parent = data.parent
 
-          this.slugBasedOnName = this.slug === ''
+          this.slugBasedOnName = !this.slug
+          this.slugBasedOnNameAz = !this.slugAz
         })
         .catch(e => {
           console.error(e)
@@ -173,6 +186,7 @@ export default {
       vm.description,
       vm.descriptionAz,
       vm.slug,
+      vm.slugAz,
       vm.alt,
       vm.imageFile,
       vm.parent
@@ -261,6 +275,7 @@ export default {
         description: this.description,
         description__az: this.descriptionAz,
         slug: this.slug,
+        slug__az: this.slugAz,
         alt: this.alt
       }
 
@@ -309,6 +324,7 @@ export default {
         this.nameAzError = ''
 
       if (this.slugBasedOnName) this.slug = slugify(this.name).toLowerCase()
+      if (this.slugBasedOnNameAz) this.slugAz = slugify(this.nameAz).toLowerCase()
     },
 
     onDescriptionInput () {
@@ -320,8 +336,10 @@ export default {
 
     onSlugInput () {
       this.slugError = ''
-      this.slugBasedOnName = this.slug === ''
+      this.slugBasedOnName = !this.slug
+      this.slugBasedOnNameAz = !this.slugAz
       this.slug = slugify(this.slug).toLowerCase()
+      this.slugAz = slugify(this.slugAz).toLowerCase()
     }
   },
 

@@ -1,9 +1,15 @@
 <template>
   <section class="page-box" :class="{'page-box--double': double}">
-    <h1 v-if="title" class="page-box__title">
+    <h1 v-if="title" class="g-title">
       {{ title }}
+      <span class="small" v-if="sideTitle">
+        {{ sideTitle }}
+      </span>
     </h1>
-    <slot />
+    <slot name="outer-content" />
+    <div class="page-box__content">
+      <slot />
+    </div>
   </section>
 </template>
 
@@ -17,6 +23,9 @@ export default {
       default: false
     },
     title: {
+      type: String
+    },
+    sideTitle: {
       type: String
     }
   }

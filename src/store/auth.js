@@ -14,9 +14,13 @@ export default {
     },
 
     signOut (state) {
-      localStorage.removeItem('token')
-      state.profile = null
-      router.push('/auth').catch(() => {})
+      if (!window.onbeforeunload) {
+        localStorage.removeItem('token')
+        state.profile = null
+        router.push('/auth').catch(() => {})
+      } else {
+        alert('Save or cancel your changes first')
+      }
     }
   },
 

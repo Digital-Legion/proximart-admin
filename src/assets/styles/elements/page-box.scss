@@ -6,15 +6,10 @@
   box-shadow: 0 0 12px rgba(0, 111, 128, 0.12);
 
   &--double {
-    display: flex;
-  }
-
-  &__title {
-    font-style: normal;
-    font-weight: 500;
-    font-size: 28px;
-    line-height: 100%;
-    color: #000000;
-    margin: 0 0 20px 0;
+    .page-box {
+      &__content {
+        display: flex;
+      }
+    }
   }
 }

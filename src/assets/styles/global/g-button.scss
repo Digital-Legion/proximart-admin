@@ -49,6 +49,39 @@
     }
   }
 
+  &--blinking {
+    animation: gButtonBlink 2s infinite;
+
+    span {
+      animation: gButtonBlinkSpan 2s infinite;
+    }
+
+    svg {
+      path {
+        animation: gButtonBlinkSvgPath 2s infinite;
+      }
+    }
+
+    @keyframes gButtonBlink {
+      50% {
+        border-color: $turquoise-dark;
+        background: $turquoise-dark;
+      }
+    }
+
+    @keyframes gButtonBlinkSpan {
+      50% {
+        color: white;
+      }
+    }
+
+    @keyframes gButtonBlinkSvgPath {
+      50% {
+        fill: #fff;
+      }
+    }
+  }
+
   &:disabled {
     border-color: #a9a9a9 !important;
     background: $gray !important;

@@ -1,6 +1,7 @@
 <template>
   <header class="page-header">
-    <h1 class="page-header__title" v-if="title">{{ title }}</h1>
+    <h1 class="g-title" v-if="title">{{ title }}</h1>
+    <slot name="content" />
     <div class="page-header__actions">
       <slot />
     </div>

@@ -12,7 +12,7 @@
         <span>Save</span>
         <span v-if="dataUpdated"> (autosave in {{ timeLeftToUpdate }})</span>
       </button>
-      <router-link class="g-button" to="/colors">
+      <router-link class="g-button g-button--danger" to="/colors">
         <font-awesome-icon icon="ban" />
         <span>Cancel</span>
       </router-link>

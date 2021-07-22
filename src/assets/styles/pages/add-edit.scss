@@ -8,4 +8,14 @@
     max-width: 280px;
     width: 100%;
   }
+
+  &__drop-image {
+
+    &--md-triple {
+      @media (min-width: 768px) {
+        width: calc(33% - 20px);
+        margin: 10px;
+      }
+    }
+  }
 }
