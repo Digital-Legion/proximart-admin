@@ -11,10 +11,11 @@
       />
 
       <form @submit.prevent="submit">
-        <CustomInput v-model="email" type="email" class="mb-20" />
+        <CustomInput v-model="email" type="email" class="mb-20" placeholder="Email" />
         <CustomInput
           v-model="password"
           type="password"
+          placeholder="Password"
           @toggle-password="showPassword = !showPassword"
           :show-password="showPassword"
           class="mb-20"
