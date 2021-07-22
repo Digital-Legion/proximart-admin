@@ -14,7 +14,7 @@
         <nav class="g-sidebar__nav">
           <ul @click="hideMobileMenu">
             <li>
-              <div class="g-sidebar__nav-item g-sidebar__nav-item--no-hover mb-20">
+              <div class="g-sidebar__nav-item g-sidebar__nav-item--profile g-sidebar__nav-item--no-hover mb-20">
                 <font-awesome-icon icon="user-circle" class="g-sidebar__nav-icon" />
                 <span>{{ profile ? profile.name : '' }}</span>
                 <button class="g-sidebar__sign-out" @click="signOut">Sign out</button>

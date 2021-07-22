@@ -54,6 +54,16 @@
     font-size: 14px;
     line-height: 1;
     font-weight: 600;
+    padding: 5px;
+    border-radius: 4px;
+    background: rgba($red, 0.05);
+    transition: background .2s ease;
+
+    @media (hover: hover) {
+      &:hover {
+        background: rgba($red, 0.1);
+      }
+    }
   }
 
   &__nav {
@@ -90,6 +100,17 @@
           path {
             fill: $cyan;
           }
+        }
+      }
+
+      &--profile {
+        font-size: 16px;
+
+        .g-sidebar__nav-icon {
+          min-width: 24px;
+          max-width: 24px;
+          min-height: 24px;
+          max-height: 24px;
         }
       }
     }
