@@ -152,7 +152,7 @@
       <div class="mt-20" v-if="currentColor">
         <page-header class="mb-20 w-100">
           <template v-slot:content>
-            <h2 class="g-subtitle mb-0">Color #{{ currentColor.hex }} ({{ currentColor.id }})</h2>
+            <h2 class="g-subtitle mb-0">Color {{ currentColor.name }} #{{ currentColor.hex }} ({{ currentColor.id }})</h2>
           </template>
           <button class="g-button" :class="{ 'g-button--blinking': !currentColor.saved }" @click="onColorSave" :disabled="waitColor">
             <font-awesome-icon icon="save" />
