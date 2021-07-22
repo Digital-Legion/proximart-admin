@@ -163,7 +163,7 @@ const createFormDataWithFilesNoId = data => {
   Object.entries(data).filter(v => v[0] !== 'id').forEach(entry => {
     if (entry[0] === 'files') {
       entry[1].forEach(file => {
-        formData.append(entry[0], file)
+        formData.append(typeof file === 'string' ? 'urls' : 'files', file)
       })
     } else formData.append(entry[0], entry[1])
   })
