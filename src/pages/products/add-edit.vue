@@ -184,7 +184,7 @@
       :data-updated="metaDataUpdated"
       :initial-data="meta"
       :loading="metaLoading"
-      :url="`https://proximart.az/product/${activeLang === 'ru' ? slug : activeLang === 'az' ? slugAz : ''}`"
+      :url="`https://proximart.az${activeLang === 'az' ? '/az' : ''}/product/${activeLang === 'ru' ? slug : activeLang === 'az' && slugAz ? slugAz : ''}`"
     />
   </div>
 </template>
