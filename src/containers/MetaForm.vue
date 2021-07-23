@@ -61,14 +61,14 @@
                 class="mb-20"
                 v-model="metaKeywords"
                 label="Meta keywords"
-                placeholder="Enter meta keywords (separate them by a comma)"
+                placeholder="Enter meta keywords (separate them by comma)"
                 v-if="activeLang === 'ru'"
               />
               <custom-input
                 class="mb-20"
                 v-model="metaKeywordsAz"
                 label="Meta keywords"
-                placeholder="Enter meta keywords (separate them by a comma)"
+                placeholder="Enter meta keywords (separate them by comma)"
                 v-else-if="activeLang === 'az'"
               />
             </div>
