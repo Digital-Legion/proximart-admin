@@ -138,19 +138,19 @@
           <template v-slot:bottom-content>
             <div class="g-flex-wrap mt-20 add-edit-page__drop-image-wrapper">
               <drop-image
-                label="Meta image"
+                label="Meta image (all languages)"
                 class="add-edit-page__drop-image add-edit-page__drop-image--md-triple"
                 :img-src="metaImageUrl"
                 @set="metaImageFile = $event.file; metaImageUrl = $event.src"
               />
               <drop-image
-                label="Facebook image"
+                label="Facebook image (all languages)"
                 class="add-edit-page__drop-image add-edit-page__drop-image--md-triple"
                 :img-src="facebookImageUrl"
                 @set="facebookImageFile = $event.file; facebookImageUrl = $event.src"
               />
               <drop-image
-                label="Twitter image"
+                label="Twitter image (all languages)"
                 class="add-edit-page__drop-image add-edit-page__drop-image--md-triple"
                 :img-src="twitterImageUrl"
                 @set="twitterImageFile = $event.file; twitterImageUrl = $event.src"
