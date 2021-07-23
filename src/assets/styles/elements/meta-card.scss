@@ -1,0 +1,10 @@
+.meta-card {
+  box-shadow: 0 0 12px rgba(0, 111, 128, 0.12);
+
+  img {
+    width: 100%;
+    height: auto;
+    min-height: 260px;
+    object-fit: cover;
+  }
+}

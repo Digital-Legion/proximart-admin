@@ -1,0 +1,87 @@
+.facebook-meta {
+  border: 1px solid #dadde1;
+  display: block;
+
+  &__bottom {
+    position: relative;
+    z-index: 1;
+    margin-top: -5px;
+    padding: 10px 12px;
+    color: #1d2129;
+    border-top: 1px solid #dadde1;
+    background: #f2f3f5;
+  }
+
+  &__url {
+    border-collapse: separate;
+    color: #606770;
+    direction: ltr;
+    display: block;
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 12px;
+    height: 11px;
+    line-height: 11px;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    text-align: left;
+    text-overflow: ellipsis;
+    text-transform: uppercase;
+    user-select: none;
+    white-space: nowrap;
+    word-wrap: break-word;
+    -webkit-border-horizontal-spacing: 0px;
+    -webkit-border-vertical-spacing: 0px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  &__title {
+    margin-top: 3px;
+    border-collapse: separate;
+    color: #1d2129;
+    cursor: pointer;
+    direction: ltr;
+    display: inline;
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    height: auto;
+    letter-spacing: normal;
+    line-height: 18px;
+    text-align: left;
+    text-decoration-color: #1d2129;
+    text-decoration-line: none;
+    text-decoration-style: solid;
+    user-select: none;
+    white-space: normal;
+    word-wrap: break-word;
+    -webkit-border-horizontal-spacing: 0px;
+    -webkit-border-vertical-spacing: 0px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  &__description {
+    margin-top: 3px;
+    border-collapse: separate;
+    color: #606770;
+    direction: ltr;
+    display: -webkit-box;
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    height: 18px;
+    line-height: 20px;
+    max-height: 80px;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    text-align: left;
+    text-overflow: ellipsis;
+    user-select: none;
+    white-space: normal;
+    word-break: break-word;
+    word-wrap: break-word;
+    -webkit-border-horizontal-spacing: 0px;
+    -webkit-border-vertical-spacing: 0px;
+    -webkit-box-orient: vertical;
+    -webkit-font-smoothing: antialiased;
+    -webkit-line-clamp: 1;
+  }
+}

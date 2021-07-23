@@ -10,6 +10,7 @@
     <div class="page-box__content">
       <slot />
     </div>
+    <slot name="bottom-content" />
   </section>
 </template>
 

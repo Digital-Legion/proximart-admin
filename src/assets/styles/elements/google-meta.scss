@@ -1,0 +1,40 @@
+.google-meta {
+  width: 100%;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  -webkit-font-smoothing: subpixel-antialiased;
+
+  &__title {
+    font-family: inherit;
+    color: #1a0dab;
+    cursor: pointer;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 18px;
+    line-height: 1.2;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  &__url {
+    font-family: inherit;
+    font-size: 14px;
+    line-height: 20px;
+    display: block;
+    height: 17px;
+    white-space: nowrap;
+    color: rgb(24, 40, 62);
+    margin-bottom: 4px;
+  }
+
+  &__description {
+    font-family: inherit;
+    color: #545454;
+    font-size: 13px;
+    line-height: 1.4;
+    word-wrap: break-word;
+  }
+}

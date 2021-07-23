@@ -1,0 +1,66 @@
+.twitter-meta {
+  border: 1px solid #E1E8ED;
+  display: block;
+  border-radius: 0.42857em;
+  overflow: hidden;
+  font-size: 14px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", sans-serif;
+  transition: .3s;
+
+  @media (hover: hover) {
+    &:hover {
+      border-color: rgba(136, 153, 166, 0.5);
+
+      .twitter-meta__bottom {
+        background-color: #F5F8FA;
+        border-color: rgba(136, 153, 166, 0.5);
+      }
+    }
+  }
+
+  &__bottom {
+    position: relative;
+    z-index: 1;
+    margin-top: -5px;
+    border-top: 1px solid #E1E8ED;
+    padding: 0.75em 1em;
+    transition: .3s;
+  }
+
+  &__title {
+    display: block;
+    margin: 0 0 0.15em;
+    font-size: 14px;
+    line-height: 18.375px;
+    letter-spacing: normal;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    font-weight: bold;
+    max-height: 1.3em;
+  }
+
+  &__description {
+    max-height: 2.6em;
+    margin-top: 0.32333em;
+    line-height: 1.3em;
+    letter-spacing: normal;
+    word-wrap: break-word;
+    overflow: hidden;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    text-overflow: ellipsis;
+  }
+
+  &__url {
+    margin-top: 0.32333em;
+    display: block;
+    color: #657786;
+    text-transform: lowercase;
+    line-height: 1.3125;
+    letter-spacing: normal;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}

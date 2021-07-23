@@ -177,6 +177,15 @@
         </div>
       </div>
     </page-box>
+
+    <meta-form
+      @submit="onMetaSubmit"
+      @set-updated="metaDataUpdated = $event"
+      :data-updated="metaDataUpdated"
+      :initial-data="meta"
+      :loading="metaLoading"
+      :url="`https://proximart.az/product/${activeLang === 'ru' ? slug : activeLang === 'az' ? slugAz : ''}`"
+    />
   </div>
 </template>
 
@@ -196,7 +205,8 @@ export default {
     PageBox: () => import('@/components/PageBox'),
     CustomInput: () => import('@/components/CustomInput'),
     CustomCascader: () => import('@/components/CustomCascader'),
-    CustomSelect: () => import('@/components/CustomSelect')
+    CustomSelect: () => import('@/components/CustomSelect'),
+    MetaForm: () => import('@/containers/MetaForm')
   },
 
   data () {
@@ -221,6 +231,9 @@ export default {
       alt: '',
       imageFile: null,
 
+      meta: null,
+      metaLoading: false,
+
       nameError: '',
       nameAzError: '',
       descriptionError: '',
@@ -236,6 +249,7 @@ export default {
       waitColor: false,
       loading: false,
       dataUpdatedGeneral: false,
+      metaDataUpdated: false,
       dontSendData: false
     }
   },
@@ -262,6 +276,7 @@ export default {
           this.discount = data.discount
           this.category = data.category?.id ?? null
           this.brand = data.brand
+          this.meta = data.meta
           if (data.colors) {
             const colors = {}
             data.colors.forEach(c => {
@@ -385,7 +400,7 @@ export default {
   methods: {
     ...mapMutations(['setActiveLang']),
     ...mapActions('categories', ['fetchCascaderCategories']),
-    ...mapActions('products', ['updateProduct', 'fetchProduct', 'fetchAllBrands', 'fetchAllColors', 'updateProductColor', 'createProductColor', 'deleteProductColor']),
+    ...mapActions('products', ['updateProduct', 'fetchProduct', 'fetchAllBrands', 'fetchAllColors', 'updateProductColor', 'createProductColor', 'deleteProductColor', 'saveMeta']),
 
     dataUpdateGeneral () {
       this.dataUpdatedGeneral = true
@@ -536,6 +551,24 @@ export default {
 
       this.dataUpdatedGeneral = false
       this.waitGeneral = false
+    },
+
+    async onMetaSubmit (rawData) {
+      this.metaLoading = true
+      await this.saveMeta({
+        meta: { ...rawData, product: this.productId },
+        metaId: this.meta?.id
+      })
+        .then(res => {
+          this.meta = res?.data
+          this.$toasted.success('Product\'s meta was successfully saved')
+          this.metaDataUpdated = false
+        })
+        .catch(e => {
+          console.error(e)
+          this.$toasted.error(e.response.data.message)
+        })
+      this.metaLoading = false
     },
 
     onNameInput () {

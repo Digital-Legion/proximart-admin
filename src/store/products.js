@@ -89,7 +89,7 @@ export default {
 
     createProductColor (_, data) {
       return new Promise((resolve, reject) => {
-        axios.post('/color/product', createFormDataWithFilesNoId(data))
+        axios.post('/color/product', createColorFormDataWithFilesNoId(data))
           .then(res => {
             resolve(res)
           })
@@ -101,7 +101,7 @@ export default {
 
     updateProductColor (_, data) {
       return new Promise((resolve, reject) => {
-        axios.put(`/color/product-color/${data.id}`, createFormDataWithFilesNoId(data))
+        axios.put(`/color/product-color/${data.id}`, createColorFormDataWithFilesNoId(data))
           .then(res => {
             resolve(res)
           })
@@ -154,11 +154,22 @@ export default {
         .catch(e => {
           console.error(e)
         })
+    },
+
+    async saveMeta (_, data) {
+      const formData = new FormData()
+      Object.entries(data.meta).forEach(entry => {
+        formData.append(entry[0], entry[1])
+      })
+
+      if (data.metaId)
+        return await axios.put(`/product/meta/${data.metaId}`, formData)
+      return await axios.post('/product/meta', formData)
     }
   }
 }
 
-const createFormDataWithFilesNoId = data => {
+const createColorFormDataWithFilesNoId = data => {
   const formData = new FormData()
   Object.entries(data).filter(v => v[0] !== 'id').forEach(entry => {
     if (entry[0] === 'files') {

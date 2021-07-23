@@ -10,10 +10,15 @@
   }
 
   &__drop-image {
+    &-wrapper {
+      margin-left: -10px;
+      margin-right: -10px;
+      width: calc(100% + 20px);
+    }
 
     &--md-triple {
       @media (min-width: 768px) {
-        width: calc(33% - 20px);
+        width: calc(33.33% - 20px);
         margin: 10px;
       }
     }
