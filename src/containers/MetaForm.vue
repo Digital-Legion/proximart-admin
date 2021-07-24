@@ -140,19 +140,19 @@
               <drop-image
                 label="Meta image (all languages)"
                 class="add-edit-page__drop-image add-edit-page__drop-image--md-triple"
-                :img-src="metaImageUrl.url"
-                @set="metaImageFile = $event.file; metaImageUrl.url = $event.src"
+                :img-src="metaImageUrl"
+                @set="metaImageFile = $event.file; metaImageUrl = $event.src"
               />
               <drop-image
                 label="Facebook image (all languages)"
                 class="add-edit-page__drop-image add-edit-page__drop-image--md-triple"
-                :img-src="facebookImageUrl.url"
+                :img-src="facebookImageUrl"
                 @set="facebookImageFile = $event.file; facebookImageUrl = $event.src"
               />
               <drop-image
                 label="Twitter image (all languages)"
                 class="add-edit-page__drop-image add-edit-page__drop-image--md-triple"
-                :img-src="twitterImageUrl.url"
+                :img-src="twitterImageUrl"
                 @set="twitterImageFile = $event.file; twitterImageUrl = $event.src"
               />
             </div>
@@ -354,17 +354,17 @@ export default {
         this.metaDescriptionAz = this.initialData.meta_description__az ?? ''
         this.metaKeywords = this.initialData.meta_keywords ?? ''
         this.metaKeywordsAz = this.initialData.meta_keywords__az ?? ''
-        this.metaImageUrl = this.initialData.meta_image ?? ''
+        this.metaImageUrl = this.initialData.meta_image?.url ?? ''
         this.facebookTitle = this.initialData.facebook_title ?? ''
         this.facebookTitleAz = this.initialData.facebook_title__az ?? ''
         this.facebookDescription = this.initialData.facebook_description ?? ''
         this.facebookDescriptionAz = this.initialData.facebook_description__az ?? ''
-        this.facebookImageUrl = this.initialData.facebook_image ?? ''
+        this.facebookImageUrl = this.initialData.facebook_image?.url ?? ''
         this.twitterTitle = this.initialData.twitter_title ?? ''
         this.twitterTitleAz = this.initialData.twitter_title__az ?? ''
         this.twitterDescription = this.initialData.twitter_description ?? ''
         this.twitterDescriptionAz = this.initialData.twitter_description__az ?? ''
-        this.twitterImageUrl = this.initialData.twitter_image ?? ''
+        this.twitterImageUrl = this.initialData.twitter_image?.url ?? ''
         this.justSetInitialData = true
         this.initialDataSet = true
       }
@@ -386,9 +386,9 @@ export default {
         twitter_title__az: this.twitterTitleAz,
         twitter_description: this.twitterDescription,
         twitter_description__az: this.twitterDescriptionAz,
-        meta_image: this.metaImageFile || this.metaImageUrl.url,
-        facebook_image: this.facebookImageFile || this.facebookImageUrl.url,
-        twitter_image: this.twitterImageFile || this.twitterImageUrl.url
+        meta_image: this.metaImageFile || this.metaImageUrl,
+        facebook_image: this.facebookImageFile || this.facebookImageUrl,
+        twitter_image: this.twitterImageFile || this.twitterImageUrl
       }
 
       this.$emit('submit', data)
