@@ -140,19 +140,19 @@
               <drop-image
                 label="Meta image (all languages)"
                 class="add-edit-page__drop-image add-edit-page__drop-image--md-triple"
-                :img-src="metaImageUrl"
-                @set="metaImageFile = $event.file; metaImageUrl = $event.src"
+                :img-src="metaImageUrl.url"
+                @set="metaImageFile = $event.file; metaImageUrl.url = $event.src"
               />
               <drop-image
                 label="Facebook image (all languages)"
                 class="add-edit-page__drop-image add-edit-page__drop-image--md-triple"
-                :img-src="facebookImageUrl"
+                :img-src="facebookImageUrl.url"
                 @set="facebookImageFile = $event.file; facebookImageUrl = $event.src"
               />
               <drop-image
                 label="Twitter image (all languages)"
                 class="add-edit-page__drop-image add-edit-page__drop-image--md-triple"
-                :img-src="twitterImageUrl"
+                :img-src="twitterImageUrl.url"
                 @set="twitterImageFile = $event.file; twitterImageUrl = $event.src"
               />
             </div>
@@ -385,19 +385,10 @@ export default {
         twitter_title: this.twitterTitle,
         twitter_title__az: this.twitterTitleAz,
         twitter_description: this.twitterDescription,
-        twitter_description__az: this.twitterDescriptionAz
-      }
-
-      if (this.metaImageFile || this.metaImageUrl) {
-        data.meta_image = this.metaImageFile || this.metaImageUrl
-      }
-
-      if (this.facebookImageFile || this.facebookImageUrl) {
-        data.facebook_image = this.facebookImageFile || this.facebookImageUrl
-      }
-
-      if (this.twitterImageFile || this.twitterImageUrl) {
-        data.twitter_image = this.twitterImageFile || this.twitterImageUrl
+        twitter_description__az: this.twitterDescriptionAz,
+        meta_image: this.metaImageFile || this.metaImageUrl.url,
+        facebook_image: this.facebookImageFile || this.facebookImageUrl.url,
+        twitter_image: this.twitterImageFile || this.twitterImageUrl.url
       }
 
       this.$emit('submit', data)

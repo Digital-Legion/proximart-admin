@@ -159,6 +159,7 @@ export default {
     async saveMeta (_, data) {
       const formData = new FormData()
       Object.entries(data.meta).forEach(entry => {
+        console.log(entry[0])
         formData.append(entry[0], entry[1])
       })
 
