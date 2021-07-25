@@ -64,18 +64,22 @@ export default {
       return await this.$router.push('/categories')
     }
 
+    this.loading = true
     await this.fetchParameters({
       page: this.page,
       categoryId: this.categoryId?.toString()
     })
+    this.loading = false
   },
 
   watch: {
     page () {
+      this.loading = true
       this.fetchParameters({
         page: this.page,
         categoryId: this.categoryId?.toString()
       })
+      this.loading = false
     }
   },
 
@@ -105,6 +109,7 @@ export default {
         cancelButtonText: 'Cancel',
         type: 'warning'
       }).then(async () => {
+        this.loading = true
         await this.removeParameter(id)
           .then(() => {
             this.$toasted.success(
@@ -117,6 +122,7 @@ export default {
               e.response.data.message
             )
           })
+        this.loading = false
       }).catch(() => {})
     }
   }

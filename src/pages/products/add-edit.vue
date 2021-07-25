@@ -8,11 +8,11 @@
 
     <page-header :title="pageTitle">
       <router-link class="g-button g-button--danger" to="/products">
-        <font-awesome-icon icon="ban" />
+        <font-awesome-icon icon="ban"/>
         <span>Cancel</span>
       </router-link>
     </page-header>
-    <page-tabs @input="setActiveLang" :value="activeLang" :options="filteredLangs" />
+    <page-tabs @input="setActiveLang" :value="activeLang" :options="filteredLangs"/>
     <page-box :double="true" class="mb-20">
       <template v-slot:outer-content>
         <page-header class="mb-20">
@@ -25,7 +25,7 @@
             @click="onProductSave"
             :disabled="waitGeneral"
           >
-            <font-awesome-icon icon="save" />
+            <font-awesome-icon icon="save"/>
             <span>Save</span>
           </button>
         </page-header>
@@ -152,14 +152,17 @@
       <div class="mt-20" v-if="currentColor">
         <page-header class="mb-20 w-100">
           <template v-slot:content>
-            <h2 class="g-subtitle mb-0">Color {{ currentColor.name }} #{{ currentColor.hex }} ({{ currentColor.id }})</h2>
+            <h2 class="g-subtitle mb-0">{{ currentColor.name }} #{{ currentColor.hex }} ({{
+                currentColor.id
+              }})</h2>
           </template>
-          <button class="g-button" :class="{ 'g-button--blinking': !currentColor.saved }" @click="onColorSave" :disabled="waitColor">
-            <font-awesome-icon icon="save" />
+          <button class="g-button" :class="{ 'g-button--blinking': !currentColor.saved }" @click="onColorSave"
+                  :disabled="waitColor">
+            <font-awesome-icon icon="save"/>
             <span>Save</span>
           </button>
           <button class="g-button g-button--danger" @click="onColorRemove">
-            <font-awesome-icon icon="trash" />
+            <font-awesome-icon icon="trash"/>
             <span>Remove</span>
           </button>
         </page-header>
@@ -186,12 +189,23 @@
       :loading="metaLoading"
       :url="`https://proximart.az${activeLang === 'az' ? '/az' : ''}/product/${activeLang === 'ru' ? slug : activeLang === 'az' && slugAz ? slugAz : ''}`"
     />
+
+    <parameters-box
+      v-if="category && parameters.items && parameters.items.length"
+      class="mt-20"
+      @submit="onParametersSubmit"
+      :initial-data="parameters.items || []"
+      :data-updated="dataUpdatedParameters"
+      @set-updated="dataUpdatedParameters = $event"
+      :loading="parametersLoading"
+    />
   </div>
 </template>
 
 <script>
-import { mapState, mapMutations, mapActions } from 'vuex'
+import { mapActions, mapMutations, mapState } from 'vuex'
 import DropImage from '@/components/DropImage'
+
 const slugify = require('slugify')
 
 export default {
@@ -206,7 +220,8 @@ export default {
     CustomInput: () => import('@/components/CustomInput'),
     CustomCascader: () => import('@/components/CustomCascader'),
     CustomSelect: () => import('@/components/CustomSelect'),
-    MetaForm: () => import('@/containers/MetaForm')
+    MetaForm: () => import('@/containers/common/MetaForm'),
+    ParametersBox: () => import('@/containers/common/ParametersBox')
   },
 
   data () {
@@ -222,6 +237,9 @@ export default {
       discount: '',
       category: null,
       brand: null,
+
+      parameters: {},
+      parametersLoading: false,
 
       colors: {},
 
@@ -249,6 +267,8 @@ export default {
       waitColor: false,
       loading: false,
       dataUpdatedGeneral: false,
+      dataUpdatedColors: false,
+      dataUpdatedParameters: false,
       metaDataUpdated: false,
       dontSendData: false
     }
@@ -277,6 +297,9 @@ export default {
           this.category = data.category?.id ?? null
           this.brand = data.brand
           this.meta = data.meta
+          this.parameters = {
+            id: data.parameters.id || null
+          }
           if (data.colors) {
             const colors = {}
             data.colors.forEach(c => {
@@ -304,7 +327,7 @@ export default {
           this.$toasted.error(e.response.data.message)
           this.$router.push('/products')
         })
-      // TODO fetch parameters
+      await this.getParameters()
       this.loading = false
     }
 
@@ -325,7 +348,10 @@ export default {
     })
 
     this.$watch(vm => [
-      vm.dataUpdatedGeneral
+      vm.dataUpdatedGeneral,
+      vm.metaDataUpdated,
+      vm.dataUpdatedColors,
+      vm.dataUpdatedParameters
     ], () => {
       this.checkDataUpdated()
     })
@@ -372,20 +398,20 @@ export default {
     defaultLangError () {
       return (
         this.nameError &&
-          this.descriptionError &&
-          this.slugError &&
-          this.altError &&
-          this.imageError
+        this.descriptionError &&
+        this.slugError &&
+        this.altError &&
+        this.imageError
       )
     },
 
     azLangError () {
       return (
         this.nameError &&
-          this.descriptionError &&
-          this.slugError &&
-          this.altError &&
-          this.imageError
+        this.descriptionError &&
+        this.slugError &&
+        this.altError &&
+        this.imageError
       )
     },
 
@@ -400,7 +426,7 @@ export default {
   methods: {
     ...mapMutations(['setActiveLang']),
     ...mapActions('categories', ['fetchCascaderCategories']),
-    ...mapActions('products', ['updateProduct', 'fetchProduct', 'fetchAllBrands', 'fetchAllColors', 'updateProductColor', 'createProductColor', 'deleteProductColor', 'saveMeta']),
+    ...mapActions('products', ['updateProduct', 'fetchProduct', 'fetchAllBrands', 'fetchAllColors', 'saveParameters', 'fetchAllParameters', 'updateProductColor', 'createProductColor', 'deleteProductColor', 'saveMeta']),
 
     dataUpdateGeneral () {
       this.dataUpdatedGeneral = true
@@ -408,7 +434,9 @@ export default {
 
     checkDataUpdated () {
       if (this.dataUpdatedGeneral ||
-          this.colorsValues.some(data => data !== null && !data.saved)) {
+        this.metaDataUpdated ||
+        this.dataUpdatedColors ||
+        this.dataUpdatedParameters) {
         window.onbeforeunload = e => {
           e.preventDefault()
           e.returnValue = ''
@@ -429,6 +457,7 @@ export default {
         images: [null]
       })
       this.currentColorId = colorId
+      this.dataUpdatedColors = true
     },
 
     onImageSet (imageData, index) {
@@ -437,18 +466,22 @@ export default {
       currentColor.saved = false
 
       if (imageData.file === '') {
-        if (index === currentColor.images.length - 1)
+        if (index === currentColor.images.length - 1) {
           currentColor.images[index] = null
-        else currentColor.images.splice(index, 1)
+        } else {
+          currentColor.images.splice(index, 1)
+        }
       } else {
         currentColor.images[index] = imageData
       }
 
       const images = currentColor.images
-      if (images[images.length - 1] !== null)
+      if (images[images.length - 1] !== null) {
         images.push(null)
+      }
 
       this.$set(this.colors, currentColor.id.toString(), currentColor)
+      this.dataUpdatedColors = true
     },
 
     async onColorSave () {
@@ -468,6 +501,7 @@ export default {
             currentColor.saved = true
             currentColor.relationId = res.data.id
             this.$set(this.colors, currentColor.id.toString(), currentColor)
+            this.checkColorsUpdated()
           })
           .catch(e => {
             console.error(e)
@@ -479,6 +513,7 @@ export default {
             this.$toasted.success('The product color was successfully updated')
             currentColor.saved = true
             this.$set(this.colors, currentColor.id.toString(), currentColor)
+            this.checkColorsUpdated()
           })
           .catch(e => {
             console.error(e)
@@ -490,28 +525,41 @@ export default {
     },
 
     async onColorRemove () {
-      let error = false
-      const colorIdToRemove = this.currentColorId.toString(),
-        colors = Object.assign({}, this.colors)
-      if (!this.currentColor.new)
-        await this.deleteProductColor({ id: this.currentColor.relationId })
-          .then(() => {
-            this.$toasted.success(`The color with id ${colorIdToRemove} was removed`)
-          })
-          .catch(e => {
-            error = true
-            console.error(e)
-            this.$toasted.error(e.response.data.message)
-          })
+      this.$confirm('This will permanently delete the color of the product and its images. Continue?', 'Confirmation', {
+        confirmButtonText: 'Remove',
+        cancelButtonText: 'Cancel',
+        type: 'warning'
+      }).then(async () => {
+        let error = false
+        const colorIdToRemove = this.currentColorId.toString(),
+          colors = Object.assign({}, this.colors)
+        if (!this.currentColor.new) {
+          await this.deleteProductColor({ id: this.currentColor.relationId })
+            .then(() => {
+              this.$toasted.success(`The color with id ${colorIdToRemove} was removed`)
+            })
+            .catch(e => {
+              error = true
+              console.error(e)
+              this.$toasted.error(e.response.data.message)
+            })
+        }
 
-      if (!error) {
-        delete colors[colorIdToRemove]
-        this.$set(this, 'colors', colors)
-        this.currentColorId = this.colorsValues[0]?.id ?? null
-      }
+        if (!error) {
+          delete colors[colorIdToRemove]
+          this.$set(this, 'colors', colors)
+          this.currentColorId = this.colorsValues[0]?.id ?? null
+          this.checkColorsUpdated()
+        }
+      }).catch(() => {
+      })
     },
 
-    onCategorySelect (category) {
+    checkColorsUpdated () {
+      this.dataUpdatedColors = this.colorsValues.some(data => data !== null && !data.saved)
+    },
+
+    async onCategorySelect (category) {
       this.category = category
     },
 
@@ -527,14 +575,13 @@ export default {
         stock: parseInt(this.stock ? this.stock : '0'),
         discount: parseFloat(this.discount ? this.discount : '0'),
         brand: this.brand,
-        id: parseInt(this.productId)
+        id: parseInt(this.productId),
+        category: this.category
       }
 
-      if (this.category)
-        productData.category = this.category
-
-      if (this.imageFile)
+      if (this.imageFile) {
         productData.file = this.imageFile
+      }
 
       this.waitGeneral = true
 
@@ -546,17 +593,29 @@ export default {
           this.$toasted.error(e.response.data.message)
         })
 
-      if (isProductUpdated === true)
+      if (isProductUpdated === true) {
         this.$toasted.success('The product was successfully updated')
+      }
 
       this.dataUpdatedGeneral = false
       this.waitGeneral = false
+
+      if (this.category) {
+        this.parametersLoading = true
+        await this.getParameters()
+        this.parametersLoading = false
+      } else {
+        this.$set(this, 'parameters', {})
+      }
     },
 
     async onMetaSubmit (rawData) {
       this.metaLoading = true
       await this.saveMeta({
-        meta: { ...rawData, product: this.productId },
+        meta: {
+          ...rawData,
+          product: this.productId
+        },
         metaId: this.meta?.id
       })
         .then(res => {
@@ -573,20 +632,22 @@ export default {
 
     onNameInput () {
       this.slugError = ''
-      if (this.activeLang === 'ru')
+      if (this.activeLang === 'ru') {
         this.nameError = ''
-      else if (this.activeLang === 'az')
+      } else if (this.activeLang === 'az') {
         this.nameAzError = ''
+      }
 
       if (this.slugBasedOnName) this.slug = slugify(this.name).toLowerCase()
       if (this.slugBasedOnNameAz) this.slugAz = slugify(this.nameAz).toLowerCase()
     },
 
     onDescriptionInput () {
-      if (this.activeLang === 'ru')
+      if (this.activeLang === 'ru') {
         this.descriptionError = ''
-      else if (this.activeLang === 'az')
+      } else if (this.activeLang === 'az') {
         this.descriptionAzError = ''
+      }
     },
 
     onSlugInput () {
@@ -595,13 +656,58 @@ export default {
       this.slugBasedOnNameAz = !this.slugAz
       this.slug = slugify(this.slug).toLowerCase()
       this.slugAz = slugify(this.slugAz).toLowerCase()
+    },
+
+    async getParameters () {
+      return new Promise((resolve) => {
+        if (this.category) {
+          this.fetchAllParameters(this.productId)
+            .then(res => {
+              this.parameters = {
+                ...this.parameters,
+                items: res.data.map(i => ({
+                  ...i,
+                  value: i.value?.[0]?.value || '',
+                  value__az: i.value?.[0].value__az || '',
+                  relationId: i.value?.[0]?.id || null
+                }))
+              }
+              resolve()
+            })
+            .catch(e => {
+              console.error(e)
+              console.error(e.response.data.message)
+              this.$toasted.error('An error occured while fetching parameters')
+              resolve()
+            })
+        } else {
+          resolve()
+        }
+      })
+    },
+
+    onParametersSubmit (data) {
+      this.saveParameters({
+        values: data.map(i => ({
+          ...i,
+          product: parseInt(this.productId)
+        }))
+      })
+        .then(() => {
+          this.$toasted.success('Product\'s parameters were successfully saved')
+          this.dataUpdatedParameters = false
+        })
+        .catch(e => {
+          console.error(e)
+          this.$toasted.error(e.response.data.message)
+        })
     }
   },
 
   beforeRouteLeave (to, from, next) {
-    if (!this.checkDataUpdated())
+    if (!this.checkDataUpdated()) {
       next()
-    else {
+    } else {
       if (confirm('Changes you made may not be saved.')) {
         window.onbeforeunload = null
         next()

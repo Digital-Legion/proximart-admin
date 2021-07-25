@@ -159,13 +159,36 @@ export default {
     async saveMeta (_, data) {
       const formData = new FormData()
       Object.entries(data.meta).forEach(entry => {
-        console.log(entry[0])
         formData.append(entry[0], entry[1])
       })
 
       if (data.metaId)
         return await axios.put(`/product/meta/${data.metaId}`, formData)
       return await axios.post('/product/meta', formData)
+    },
+
+    async fetchAllParameters (_, productId) {
+      return new Promise((resolve, reject) => {
+        axios.get(`/category/parameters/${productId}`)
+          .then(res => {
+            resolve(res)
+          })
+          .catch(e => {
+            reject(e)
+          })
+      })
+    },
+
+    async saveParameters (_, data) {
+      return new Promise((resolve, reject) => {
+        axios.post('/parameters/product', data)
+          .then(res => {
+            resolve(res)
+          })
+          .catch(e => {
+            reject(e)
+          })
+      })
     }
   }
 }

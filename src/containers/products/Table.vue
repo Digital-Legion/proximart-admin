@@ -99,7 +99,9 @@ export default {
   },
 
   async created () {
+    this.loading = true
     await this.fetchProducts(this.page)
+    this.loading = false
   },
 
   watch: {
@@ -138,7 +140,9 @@ export default {
     ...mapActions('products', ['fetchProducts', 'removeProduct', 'createProduct']),
 
     debounceFetch: debounce(async function () {
+      this.loading = true
       this.fetchProducts(this.page)
+      this.loading = false
     }, 200),
 
     onRemove (id) {
@@ -147,6 +151,7 @@ export default {
         cancelButtonText: 'Cancel',
         type: 'warning'
       }).then(async () => {
+        this.loading = true
         await this.removeProduct(id)
           .then(() => {
             this.$message({
@@ -161,6 +166,7 @@ export default {
               message: e.response.data.message
             })
           })
+        this.loading = false
       }).catch(() => {})
     },
 

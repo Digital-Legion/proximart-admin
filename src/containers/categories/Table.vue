@@ -65,10 +65,12 @@ export default {
   },
 
   async created () {
+    this.loading = true
     await this.fetchCategories({
       page: this.page,
       parentId: this.parentId?.toString()
     })
+    this.loading = false
   },
 
   watch: {
@@ -102,10 +104,12 @@ export default {
     ...mapActions('categories', ['fetchCategories', 'removeCategory']),
 
     debounceFetch: debounce(async function () {
+      this.loading = true
       this.fetchCategories({
         page: this.page,
         parentId: this.parentId?.toString()
       })
+      this.loading = false
     }, 200),
 
     onRemove (id) {
@@ -114,6 +118,7 @@ export default {
         cancelButtonText: 'Cancel',
         type: 'warning'
       }).then(async () => {
+        this.loading = true
         await this.removeCategory(id)
           .then(() => {
             this.$message({
@@ -128,6 +133,7 @@ export default {
               message: e.response.data.message
             })
           })
+        this.loading = false
       }).catch(() => {})
     }
   }
