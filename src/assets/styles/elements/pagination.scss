@@ -7,16 +7,19 @@
   padding: 0 40px;
 
   button {
+    min-width: 30px;
     background: none;
     border: none;
     display: flex;
+    justify-content: center;
     align-items: center;
+    text-align: center;
     font-size: 16px;
     line-height: 130%;
     margin: 0 5px;
     padding: 5px 10px;
-    color: #2c3e50;
-    border-radius: 50%;
+    color: #00A8C2;
+    border-radius: 100px;
 
     &:focus {
       outline: none;
@@ -30,7 +33,7 @@
   &__button {
     &.current {
       color: white;
-      background: #2c3e50;
+      background: #00A8C2;
     }
   }
 }

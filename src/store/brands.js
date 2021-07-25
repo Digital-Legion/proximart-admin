@@ -6,7 +6,7 @@ export default {
   state: {
     brands: null,
     allCategories: [],
-    limit: 12
+    limit: 10
   },
 
   mutations: {

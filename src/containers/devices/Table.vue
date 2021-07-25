@@ -20,21 +20,7 @@
           <span v-if="!props.row.new">{{ props.row.name }}</span>
           <div v-else class="g-table__cell">
             <custom-input
-              v-model="newProductName"
-              @input="onNameInput"
-            />
-          </div>
-        </template>
-      </el-table-column>
-      <el-table-column
-        label="Slug"
-      >
-        <template slot-scope="props">
-          <span v-if="!props.row.new">{{ props.row.slug }}</span>
-          <div v-else class="g-table__cell">
-            <custom-input
-              v-model="newProductSlug"
-              @input="onSlugInput"
+              v-model="newDeviceName"
             />
           </div>
         </template>
@@ -51,7 +37,7 @@
               </button>
             </template>
             <template v-else>
-              <a :href="`/products/${props.row.id}`" target="_blank" class="g-button g-button--edit g-table__actions-item">
+              <a :href="`/devices/${props.row.id}`" target="_blank" class="g-button g-button--edit g-table__actions-item">
                 <font-awesome-icon icon="edit" />
               </a>
               <button class="g-button g-button--danger g-table__actions-item" @click="onRemove(props.row.id)">
@@ -69,7 +55,6 @@
 <script>
 import { mapActions, mapState } from 'vuex'
 import { debounce } from '@/utils/debounce'
-import slugify from 'slugify'
 
 export default {
   name: 'Table',
@@ -91,16 +76,13 @@ export default {
       loading: false,
       page: 1,
 
-      newProductName: '',
-      newProductSlug: '',
-
-      slugBasedOnName: true
+      newDeviceName: ''
     }
   },
 
   async created () {
     this.loading = true
-    await this.fetchProducts(this.page)
+    await this.fetchDevices(this.page)
     this.loading = false
   },
 
@@ -110,53 +92,50 @@ export default {
     },
 
     creatingNew () {
-      this.slugBasedOnName = true
-      this.newProductName = ''
-      this.newProductSlug = ''
+      this.newDeviceName = ''
     }
   },
 
   computed: {
-    ...mapState('products', ['products', 'limit']),
+    ...mapState('devices', ['devices', 'limit']),
 
     tableData () {
-      const data = JSON.parse(JSON.stringify(this.products?.items ?? []))
+      const data = JSON.parse(JSON.stringify(this.devices?.items ?? []))
       if (this.creatingNew)
         data.unshift({
           new: true,
           id: 'NEW',
-          name: '',
-          slug: ''
+          name: ''
         })
       return data
     },
 
     total () {
-      return parseInt(this.products?.meta?.totalItems.toString() ?? '0')
+      return parseInt(this.devices?.meta?.totalItems.toString() ?? '0')
     }
   },
 
   methods: {
-    ...mapActions('products', ['fetchProducts', 'removeProduct', 'createProduct']),
+    ...mapActions('devices', ['fetchDevices', 'removeDevice', 'createDevice']),
 
     debounceFetch: debounce(async function () {
       this.loading = true
-      await this.fetchProducts(this.page)
+      await this.fetchDevices(this.page)
       this.loading = false
     }, 200),
 
     onRemove (id) {
-      this.$confirm('This will permanently delete the product. Continue?', 'Confirmation', {
+      this.$confirm('This will permanently delete the device. Continue?', 'Confirmation', {
         confirmButtonText: 'Remove',
         cancelButtonText: 'Cancel',
         type: 'warning'
       }).then(async () => {
         this.loading = true
-        await this.removeProduct(id)
+        await this.removeDevice(id)
           .then(() => {
             this.$message({
               type: 'success',
-              message: `Product with id ${id} was removed`
+              message: `Device with id ${id} was removed`
             })
           })
           .catch(e => {
@@ -171,14 +150,13 @@ export default {
     },
 
     onCreate () {
-      this.createProduct({
-        name: this.newProductName,
-        slug: this.newProductSlug
+      this.createDevice({
+        name: this.newDeviceName
       }).then(() => {
         this.$emit('set-creating-new', false)
         if (this.page !== 1)
           this.page = 1
-        else this.fetchProducts(this.page)
+        else this.fetchDevices(this.page)
       }).catch(e => {
         this.$toasted.error(e.response.data.error || e.response.data.message)
       })
@@ -186,18 +164,7 @@ export default {
 
     onRemoveLocal () {
       this.$emit('set-creating-new', false)
-      this.newProductName = ''
-      this.newProductSlug = ''
-    },
-
-    onNameInput (name) {
-      if (this.slugBasedOnName) {
-        this.newProductSlug = slugify(name).toLowerCase()
-      }
-    },
-
-    onSlugInput () {
-      this.slugBasedOnName = false
+      this.newDeviceName = ''
     }
   }
 }

@@ -40,7 +40,7 @@
         </template>
       </el-table-column>
     </el-table>
-    <pagination v-model="page" :total-elems="total" :per-page="limit" v-if="total > page * limit" />
+    <pagination v-model="page" :total-elems="total" :per-page="limit" />
   </div>
 </template>
 
@@ -91,7 +91,7 @@ export default {
 
     debounceFetch: debounce(async function () {
       this.loading = true
-      this.fetchColors(this.page)
+      await this.fetchColors(this.page)
       this.loading = false
     }, 200),
 

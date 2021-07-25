@@ -7,7 +7,8 @@ export default {
     products: null,
     allBrands: [],
     allColors: [],
-    limit: 12
+    allDevices: [],
+    limit: 10
   },
 
   mutations: {
@@ -36,6 +37,10 @@ export default {
 
     setAllColors (state, payload) {
       state.allColors = payload
+    },
+
+    setAllDevices (state, payload) {
+      state.allDevices = payload
     }
   },
 
@@ -189,6 +194,16 @@ export default {
             reject(e)
           })
       })
+    },
+
+    async fetchAllDevices ({ commit }) {
+      axios.get('/device?page=1&limit=99999')
+        .then(res => {
+          commit('setAllDevices', res.data?.items ?? [])
+        })
+        .catch(e => {
+          console.error(e)
+        })
     }
   }
 }

@@ -44,6 +44,12 @@
                 <span>Products</span>
               </router-link>
             </li>
+            <li>
+              <router-link to="/devices" class="g-sidebar__nav-item" :class="{'router-link-exact-active': $route.path.startsWith('/devices')}">
+                <font-awesome-icon :icon="['fab', 'dochub']" class="g-sidebar__nav-icon" />
+                <span>Devices</span>
+              </router-link>
+            </li>
           </ul>
         </nav>
         <div class="g-sidebar__toggler" @click="toggleMenu" v-if="isMobile()">

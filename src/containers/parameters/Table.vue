@@ -30,7 +30,7 @@
         </template>
       </el-table-column>
     </el-table>
-    <pagination :value="page" @input="$emit('set-page', $event)" :total-elems="total" :per-page="limit" v-if="total > page * limit" />
+    <pagination :value="page" @input="$emit('set-page', $event)" :total-elems="total" :per-page="limit" />
   </div>
 </template>
 
@@ -73,9 +73,9 @@ export default {
   },
 
   watch: {
-    page () {
+    async page () {
       this.loading = true
-      this.fetchParameters({
+      await this.fetchParameters({
         page: this.page,
         categoryId: this.categoryId?.toString()
       })

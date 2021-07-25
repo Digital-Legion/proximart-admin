@@ -5,7 +5,7 @@ export default {
 
   state: {
     colors: null,
-    limit: 12
+    limit: 10
   },
 
   mutations: {

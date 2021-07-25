@@ -13,7 +13,7 @@ import axios from 'axios'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faCopyright, faPlus, faSave, faBan, faEdit, faTrash, faSitemap, faCubes, faBold, faPalette, faUserCircle, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons'
-import { faCuttlefish, faProductHunt } from '@fortawesome/free-brands-svg-icons'
+import { faCuttlefish, faProductHunt, faDochub } from '@fortawesome/free-brands-svg-icons'
 import PhoneMaskInput from 'vue-phone-mask-input'
 import TextareaAutosize from 'vue-textarea-autosize'
 import Element from 'element-ui'
@@ -23,7 +23,7 @@ import Toasted from 'vue-toasted'
 import 'vue-loading-overlay/dist/vue-loading.css'
 import VueLoading from 'vue-loading-overlay'
 
-library.add(faCopyright, faPlus, faSave, faBan, faEdit, faTrash, faSitemap, faCubes, faCuttlefish, faBold, faPalette, faUserCircle, faProductHunt, faEye, faEyeSlash)
+library.add(faCopyright, faPlus, faSave, faBan, faEdit, faTrash, faSitemap, faCubes, faCuttlefish, faBold, faPalette, faUserCircle, faProductHunt, faEye, faEyeSlash, faDochub)
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 Vue.component('phone-mask-input', PhoneMaskInput)
 Vue.component('loading', VueLoading)

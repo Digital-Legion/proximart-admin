@@ -140,6 +140,20 @@ const routes = [
     meta: {
       layout: 'auth-layout'
     }
+  },
+  {
+    path: '/devices',
+    component: () => import('@/pages/devices/index.vue'),
+    children: [
+      {
+        path: '',
+        name: 'devices',
+        component: () => import('@/pages/devices/all.vue'),
+        meta: {
+          layout: 'auth-layout'
+        }
+      }
+    ]
   }
 ]
 

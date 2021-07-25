@@ -89,6 +89,14 @@
           placeholder="Select category (or leave it empty)"
           class="mb-20"
         />
+        <custom-select
+          :value="devices"
+          @set-value="devices = $event"
+          :multiple="true"
+          :options="allDevices"
+          label="Devices (all languages)"
+          placeholder="Select devices (or leave it empty)"
+        />
       </div>
       <div class="add-edit-page__right">
         <custom-input
@@ -120,6 +128,14 @@
           placeholder="Select brand"
         />
       </div>
+
+      <template v-slot:bottom-content>
+        <h2 class="g-subtitle mt-20">Youtube videos</h2>
+        <custom-multi-input
+          v-model="youtubeVideos"
+          placeholder="Enter a YouTube video link"
+        />
+      </template>
     </page-box>
     <page-box class="mb-20" title="Colors and Images" side-title="(all languages)">
       <div class="g-flex-wrap">
@@ -218,6 +234,7 @@ export default {
     PageTabs: () => import('@/components/PageTabs'),
     PageBox: () => import('@/components/PageBox'),
     CustomInput: () => import('@/components/CustomInput'),
+    CustomMultiInput: () => import('@/components/CustomMultiInput'),
     CustomCascader: () => import('@/components/CustomCascader'),
     CustomSelect: () => import('@/components/CustomSelect'),
     MetaForm: () => import('@/containers/common/MetaForm'),
@@ -237,6 +254,8 @@ export default {
       discount: '',
       category: null,
       brand: null,
+      devices: null,
+      youtubeVideos: null,
 
       parameters: {},
       parametersLoading: false,
@@ -278,6 +297,7 @@ export default {
     await this.fetchCascaderCategories()
     await this.fetchAllBrands()
     await this.fetchAllColors()
+    await this.fetchAllDevices()
   },
 
   async mounted () {
@@ -296,9 +316,13 @@ export default {
           this.discount = data.discount
           this.category = data.category?.id ?? null
           this.brand = data.brand
+          this.devices = data.devices?.map(v => v.id) ?? null
           this.meta = data.meta
           this.parameters = {
-            id: data.parameters.id || null
+            id: data.parameters?.id || null
+          }
+          if (data.youtube) {
+            this.youtubeVideos = data.youtube.map(v => v.url)
           }
           if (data.colors) {
             const colors = {}
@@ -342,7 +366,8 @@ export default {
       vm.stock,
       vm.discount,
       vm.category,
-      vm.brand
+      vm.brand,
+      vm.youtubeVideos
     ], () => {
       this.dataUpdateGeneral()
     })
@@ -360,7 +385,7 @@ export default {
   computed: {
     ...mapState(['activeLang', 'langs']),
     ...mapState('categories', ['cascaderCategories']),
-    ...mapState('products', ['allBrands', 'allColors']),
+    ...mapState('products', ['allBrands', 'allColors', 'allDevices']),
 
     colorsValues () {
       const newColors = Object.values(this.colors)
@@ -426,7 +451,7 @@ export default {
   methods: {
     ...mapMutations(['setActiveLang']),
     ...mapActions('categories', ['fetchCascaderCategories']),
-    ...mapActions('products', ['updateProduct', 'fetchProduct', 'fetchAllBrands', 'fetchAllColors', 'saveParameters', 'fetchAllParameters', 'updateProductColor', 'createProductColor', 'deleteProductColor', 'saveMeta']),
+    ...mapActions('products', ['updateProduct', 'fetchProduct', 'fetchAllBrands', 'fetchAllColors', 'saveParameters', 'fetchAllDevices', 'fetchAllParameters', 'updateProductColor', 'createProductColor', 'deleteProductColor', 'saveMeta']),
 
     dataUpdateGeneral () {
       this.dataUpdatedGeneral = true
@@ -561,6 +586,7 @@ export default {
 
     async onCategorySelect (category) {
       this.category = category
+      this.parameters = {}
     },
 
     async onProductSave () {
@@ -576,7 +602,11 @@ export default {
         discount: parseFloat(this.discount ? this.discount : '0'),
         brand: this.brand,
         id: parseInt(this.productId),
-        category: this.category
+        category: this.category,
+        devices: this.devices?.length ? this.devices.join(',') : '',
+        youtube: this.youtubeVideos?.map(v => ({
+          url: v
+        })) || null
       }
 
       if (this.imageFile) {
@@ -600,9 +630,12 @@ export default {
       this.dataUpdatedGeneral = false
       this.waitGeneral = false
 
-      if (this.category) {
+      if (this.category && !this.parameters.items) {
         this.parametersLoading = true
         await this.getParameters()
+          .then(res => {
+            console.log(res)
+          })
         this.parametersLoading = false
       } else {
         this.$set(this, 'parameters', {})
@@ -668,20 +701,20 @@ export default {
                 items: res.data.map(i => ({
                   ...i,
                   value: i.value?.[0]?.value || '',
-                  value__az: i.value?.[0].value__az || '',
+                  value__az: i.value?.[0]?.value__az || '',
                   relationId: i.value?.[0]?.id || null
                 }))
               }
-              resolve()
+              resolve(res)
             })
             .catch(e => {
               console.error(e)
               console.error(e.response.data.message)
               this.$toasted.error('An error occured while fetching parameters')
-              resolve()
+              resolve(e)
             })
         } else {
-          resolve()
+          resolve(false)
         }
       })
     },

@@ -6,7 +6,7 @@ export default {
   state: {
     categories: null,
     cascaderCategories: null,
-    limit: 12
+    limit: 10
   },
 
   mutations: {

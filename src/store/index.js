@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 
 import categories from '@/store/categories'
 import brands from '@/store/brands'
+import devices from '@/store/devices'
 import colors from '@/store/colors'
 import products from '@/store/products'
 import parameters from '@/store/parameters'
@@ -14,6 +15,7 @@ export default new Vuex.Store({
   modules: {
     categories,
     brands,
+    devices,
     colors,
     products,
     parameters,
