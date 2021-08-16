@@ -142,6 +142,15 @@
             &--two-line {
               height: 58px;
             }
+
+            &--profile {
+              .g-sidebar__nav-icon {
+                max-width: 24px;
+                min-width: 24px;
+                max-height: 24px;
+                min-height: 24px;
+              }
+            }
           }
         }
 
@@ -201,6 +210,16 @@
           visibility: hidden;
           transition: opacity .2s ease, visibility .2s ease;
           white-space: nowrap;
+        }
+
+        &--profile {
+          .g-sidebar__nav-icon {
+            max-width: 16px;
+            min-width: 16px;
+            max-height: 16px;
+            min-height: 16px;
+            transition: all .2s ease;
+          }
         }
       }
 

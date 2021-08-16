@@ -154,6 +154,14 @@ const routes = [
         }
       }
     ]
+  },
+  {
+    path: '/banners',
+    name: 'banners',
+    component: () => import('@/pages/banners/index.vue'),
+    meta: {
+      layout: 'auth-layout'
+    }
   }
 ]
 

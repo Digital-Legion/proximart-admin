@@ -14,19 +14,22 @@
         prop="id"
       />
       <el-table-column
-        label="Name RU"
+        label="Name"
         prop="name"
       />
       <el-table-column
-        label="Name AZ"
-        prop="name__az"
-      />
+        label="Banner type"
+      >
+        <template slot-scope="props">
+          {{ props.row.big_banner ? 'Large' : 'Small' }}
+        </template>
+      </el-table-column>
       <el-table-column label="Actions">
         <template slot-scope="props">
           <div class="g-table__actions">
-            <button class="g-button g-button--edit g-table__actions-item" @click="$emit('edit-parameter', props.row)">
+            <a :href="`/products/${props.row.product ? props.row.product.id : null}`" target="_blank" class="g-button g-button--edit g-table__actions-item">
               <font-awesome-icon icon="edit" />
-            </button>
+            </a>
             <button class="g-button g-button--danger g-table__actions-item" @click="onRemove(props.row.id)">
               <font-awesome-icon icon="trash" />
             </button>
@@ -34,12 +37,13 @@
         </template>
       </el-table-column>
     </el-table>
-    <pagination :value="page" @input="$emit('set-page', $event)" :total-elems="total" :per-page="limit" />
+    <pagination v-model="page" :total-elems="total" :per-page="limit" />
   </div>
 </template>
 
 <script>
 import { mapActions, mapState } from 'vuex'
+import { debounce } from '@/utils/debounce'
 
 export default {
   name: 'Table',
@@ -49,82 +53,87 @@ export default {
   },
 
   props: {
-    page: {
-      type: Number,
-      default: 1
+    bannerType: {
+      type: Object,
+      default: null
     }
   },
 
   data () {
     return {
       loading: false,
-      category: null
+      page: 1
     }
   },
 
   async created () {
-    if (!this.categoryId) {
-      console.error('No category id')
-      return await this.$router.push('/categories')
-    }
-
     this.loading = true
-    await this.fetchParameters({
+    await this.fetchBanners({
       page: this.page,
-      categoryId: this.categoryId?.toString()
+      bannerType: this.bannerType.value
     })
     this.loading = false
   },
 
   watch: {
-    async page () {
+    page () {
+      this.debounceFetch()
+    },
+
+    async bannerType () {
       this.loading = true
-      await this.fetchParameters({
+      await this.fetchBanners({
         page: this.page,
-        categoryId: this.categoryId?.toString()
+        bannerType: this.bannerType.value
       })
       this.loading = false
     }
   },
 
   computed: {
-    ...mapState('parameters', ['parameters', 'limit']),
+    ...mapState('banners', ['banners', 'limit']),
 
     tableData () {
-      return this.parameters?.items ?? []
-    },
-
-    categoryId () {
-      return this.$route.params.id ?? null
+      return this.banners?.items ?? []
     },
 
     total () {
-      return parseInt(this.parameters?.meta?.totalItems.toString() ?? '0')
+      return parseInt(this.banners?.meta?.totalItems.toString() ?? '0')
     }
   },
 
   methods: {
-    ...mapActions('parameters', ['fetchParameters', 'removeParameter']),
-    ...mapActions('categories', ['fetchCategory']),
+    ...mapActions('banners', ['fetchBanners', 'removeBanner']),
+
+    debounceFetch: debounce(async function () {
+      this.loading = true
+      await this.fetchBanners({
+        page: this.page,
+        bannerType: this.bannerType.value
+      })
+      this.loading = false
+    }, 200),
 
     onRemove (id) {
-      this.$confirm('This will permanently delete the parameter. Continue?', 'Confirmation', {
+      this.$confirm('This will permanently delete the banner. Continue?', 'Confirmation', {
         confirmButtonText: 'Remove',
         cancelButtonText: 'Cancel',
         type: 'warning'
       }).then(async () => {
         this.loading = true
-        await this.removeParameter(id)
+        await this.removeBanner({ id })
           .then(() => {
-            this.$toasted.success(
-              `Parameter with id ${id} was removed`
-            )
+            this.$message({
+              type: 'success',
+              message: `Banner with id ${id} was removed`
+            })
           })
           .catch(e => {
             console.error(e)
-            this.$toasted.error(
-              e.response.data.message
-            )
+            this.$message({
+              type: 'error',
+              message: e.response.data.message
+            })
           })
         this.loading = false
       }).catch(() => {})

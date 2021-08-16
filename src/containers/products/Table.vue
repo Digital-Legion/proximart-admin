@@ -14,7 +14,7 @@
         prop="id"
       />
       <el-table-column
-        label="Name"
+        label="Name RU"
       >
         <template slot-scope="props">
           <span v-if="!props.row.new">{{ props.row.name }}</span>
@@ -22,6 +22,18 @@
             <custom-input
               v-model="newProductName"
               @input="onNameInput"
+            />
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column
+        label="Name AZ"
+      >
+        <template slot-scope="props">
+          <span v-if="!props.row.new">{{ props.row.name__az }}</span>
+          <div v-else class="g-table__cell">
+            <custom-input
+              v-model="newProductNameAz"
             />
           </div>
         </template>
@@ -92,6 +104,7 @@ export default {
       page: 1,
 
       newProductName: '',
+      newProductNameAz: '',
       newProductSlug: '',
 
       slugBasedOnName: true
@@ -112,6 +125,7 @@ export default {
     creatingNew () {
       this.slugBasedOnName = true
       this.newProductName = ''
+      this.newProductNameAz = ''
       this.newProductSlug = ''
     }
   },
@@ -126,6 +140,7 @@ export default {
           new: true,
           id: 'NEW',
           name: '',
+          name__az: '',
           slug: ''
         })
       return data
@@ -173,6 +188,7 @@ export default {
     onCreate () {
       this.createProduct({
         name: this.newProductName,
+        name__az: this.newProductNameAz,
         slug: this.newProductSlug
       }).then(() => {
         this.$emit('set-creating-new', false)
@@ -187,6 +203,7 @@ export default {
     onRemoveLocal () {
       this.$emit('set-creating-new', false)
       this.newProductName = ''
+      this.newProductNameAz = ''
       this.newProductSlug = ''
     },
 

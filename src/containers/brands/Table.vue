@@ -14,7 +14,7 @@
         prop="id"
       />
       <el-table-column
-        label="Name"
+        label="Name RU"
         prop="name"
       />
       <el-table-column label="Actions">

@@ -127,6 +127,15 @@
           label="Brand (all languages)"
           placeholder="Select brand"
         />
+        <custom-checkbox
+          style="margin-top: 40px"
+          label="Show on main page"
+          v-model="showOnMainPage"
+        />
+        <custom-checkbox
+          label="Hit"
+          v-model="isHit"
+        />
       </div>
 
       <template v-slot:bottom-content>
@@ -168,9 +177,7 @@
       <div class="mt-20" v-if="currentColor">
         <page-header class="mb-20 w-100">
           <template v-slot:content>
-            <h2 class="g-subtitle mb-0">{{ currentColor.name }} #{{ currentColor.hex }} ({{
-                currentColor.id
-              }})</h2>
+            <h2 class="g-subtitle mb-0">({{ currentColor.id }}) {{ currentColor.name }} #{{ currentColor.hex }} </h2>
           </template>
           <button class="g-button" :class="{ 'g-button--blinking': !currentColor.saved }" @click="onColorSave"
                   :disabled="waitColor">
@@ -198,12 +205,23 @@
     </page-box>
 
     <meta-form
+      class="mb-20"
       @submit="onMetaSubmit"
       @set-updated="metaDataUpdated = $event"
       :data-updated="metaDataUpdated"
       :initial-data="meta"
       :loading="metaLoading"
       :url="`https://proximart.az${activeLang === 'az' ? '/az' : ''}/product/${activeLang === 'ru' ? slug : activeLang === 'az' && slugAz ? slugAz : ''}`"
+    />
+
+    <banner-box
+      :loading="bannerLoading"
+      @set-loading="bannerLoading = $event"
+      :initial-data="banner"
+      :data-updated="dataUpdatedBanner"
+      @set-updated="dataUpdatedBanner = $event"
+      :product-id="productId"
+      @set-banner="banner = $event"
     />
 
     <parameters-box
@@ -229,16 +247,17 @@ export default {
 
   components: {
     DropImage,
-    // DropImage: () => import('@/components/DropImage'),
     PageHeader: () => import('@/components/PageHeader'),
     PageTabs: () => import('@/components/PageTabs'),
     PageBox: () => import('@/components/PageBox'),
     CustomInput: () => import('@/components/CustomInput'),
+    CustomCheckbox: () => import('@/components/CustomCheckbox'),
     CustomMultiInput: () => import('@/components/CustomMultiInput'),
     CustomCascader: () => import('@/components/CustomCascader'),
     CustomSelect: () => import('@/components/CustomSelect'),
     MetaForm: () => import('@/containers/common/MetaForm'),
-    ParametersBox: () => import('@/containers/common/ParametersBox')
+    ParametersBox: () => import('@/containers/common/ParametersBox'),
+    BannerBox: () => import('@/containers/common/BannerBox')
   },
 
   data () {
@@ -256,6 +275,11 @@ export default {
       brand: null,
       devices: null,
       youtubeVideos: null,
+      isHit: false,
+      showOnMainPage: false,
+
+      banner: null,
+      bannerLoading: false,
 
       parameters: {},
       parametersLoading: false,
@@ -288,6 +312,7 @@ export default {
       dataUpdatedGeneral: false,
       dataUpdatedColors: false,
       dataUpdatedParameters: false,
+      dataUpdatedBanner: false,
       metaDataUpdated: false,
       dontSendData: false
     }
@@ -318,6 +343,9 @@ export default {
           this.brand = data.brand
           this.devices = data.devices?.map(v => v.id) ?? null
           this.meta = data.meta
+          this.banner = data.banners?.[0] || null
+          this.isHit = data.hit
+          this.showOnMainPage = data.main_page
           this.parameters = {
             id: data.parameters?.id || null
           }
@@ -451,7 +479,20 @@ export default {
   methods: {
     ...mapMutations(['setActiveLang']),
     ...mapActions('categories', ['fetchCascaderCategories']),
-    ...mapActions('products', ['updateProduct', 'fetchProduct', 'fetchAllBrands', 'fetchAllColors', 'saveParameters', 'fetchAllDevices', 'fetchAllParameters', 'updateProductColor', 'createProductColor', 'deleteProductColor', 'saveMeta']),
+    ...mapActions('banners', ['fetchBanner']),
+    ...mapActions('products', [
+      'updateProduct',
+      'fetchProduct',
+      'fetchAllBrands',
+      'fetchAllColors',
+      'saveParameters',
+      'fetchAllDevices',
+      'fetchAllParameters',
+      'updateProductColor',
+      'createProductColor',
+      'deleteProductColor',
+      'saveMeta'
+    ]),
 
     dataUpdateGeneral () {
       this.dataUpdatedGeneral = true
@@ -461,7 +502,8 @@ export default {
       if (this.dataUpdatedGeneral ||
         this.metaDataUpdated ||
         this.dataUpdatedColors ||
-        this.dataUpdatedParameters) {
+        this.dataUpdatedParameters ||
+        this.dataUpdatedBanner) {
         window.onbeforeunload = e => {
           e.preventDefault()
           e.returnValue = ''
@@ -597,6 +639,8 @@ export default {
         description__az: this.descriptionAz,
         slug: this.slug,
         slug__az: this.slugAz,
+        hit: this.isHit,
+        main_page: this.showOnMainPage,
         price: parseFloat(this.price ? this.price : '0'),
         stock: parseInt(this.stock ? this.stock : '0'),
         discount: parseFloat(this.discount ? this.discount : '0'),
@@ -633,9 +677,6 @@ export default {
       if (this.category && !this.parameters.items) {
         this.parametersLoading = true
         await this.getParameters()
-          .then(res => {
-            console.log(res)
-          })
         this.parametersLoading = false
       } else {
         this.$set(this, 'parameters', {})
@@ -708,7 +749,6 @@ export default {
               resolve(res)
             })
             .catch(e => {
-              console.error(e)
               console.error(e.response.data.message)
               this.$toasted.error('An error occured while fetching parameters')
               resolve(e)

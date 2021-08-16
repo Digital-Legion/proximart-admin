@@ -14,8 +14,12 @@
         prop="id"
       />
       <el-table-column
-        label="Name"
+        label="Name RU"
         prop="name"
+      />
+      <el-table-column
+        label="Name AZ"
+        prop="name__az"
       />
       <el-table-column
         label="Color"

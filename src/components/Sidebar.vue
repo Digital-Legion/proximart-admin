@@ -50,6 +50,12 @@
                 <span>Devices</span>
               </router-link>
             </li>
+            <li>
+              <router-link to="/banners" class="g-sidebar__nav-item" :class="{'router-link-exact-active': $route.path.startsWith('/banners')}">
+                <font-awesome-icon icon="pager" class="g-sidebar__nav-icon" />
+                <span>Banners</span>
+              </router-link>
+            </li>
           </ul>
         </nav>
         <div class="g-sidebar__toggler" @click="toggleMenu" v-if="isMobile()">

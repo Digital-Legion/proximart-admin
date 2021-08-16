@@ -50,7 +50,7 @@ import { mapState, mapActions, mapMutations } from 'vuex'
 import { debounce } from '@/utils/debounce'
 
 export default {
-  name: 'BrandsAddEdit',
+  name: 'ColorsAddEdit',
 
   components: {
     PageHeader: () => import('@/components/PageHeader'),
@@ -82,7 +82,7 @@ export default {
         .then(({ data }) => {
           this.name = data.name
           this.nameAz = data.name__az
-          this.color = data.color ? `#${data.color}` : null
+          this.color = data.hex ? `#${data.hex}` : null
         })
         .catch(e => {
           console.error(e)

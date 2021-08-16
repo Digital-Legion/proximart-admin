@@ -59,7 +59,7 @@ export default {
       }
     },
 
-    fetchCascaderCategories ({ commit, state }) {
+    fetchCascaderCategories ({ commit }) {
       axios.get('/category/cascader')
         .then(res => {
           commit('setCascaderCategories', res.data)

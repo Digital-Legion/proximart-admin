@@ -2,6 +2,8 @@
 @import './global/g-button';
 @import './global/g-color';
 
+$--color-primary: $turquoise-dark !default;
+
 .container {
   width: 100%;
   max-width: 1250px;
