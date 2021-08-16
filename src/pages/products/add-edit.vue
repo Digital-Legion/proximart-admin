@@ -395,7 +395,9 @@ export default {
       vm.discount,
       vm.category,
       vm.brand,
-      vm.youtubeVideos
+      vm.youtubeVideos,
+      vm.isHit,
+      vm.showOnMainPage
     ], () => {
       this.dataUpdateGeneral()
     })
