@@ -340,7 +340,7 @@ export default {
           this.stock = data.stock
           this.discount = data.discount
           this.category = data.category?.id ?? null
-          this.brand = data.brand
+          this.brand = data.brand?.id || null
           this.devices = data.devices?.map(v => v.id) ?? null
           this.meta = data.meta
           this.banner = data.banners?.[0] || null
