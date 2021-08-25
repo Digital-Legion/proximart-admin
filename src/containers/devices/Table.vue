@@ -17,8 +17,8 @@
         label="Name"
       >
         <template slot-scope="props">
-          <span v-if="!props.row.new">{{ props.row.name }}</span>
-          <div v-else class="g-table__cell">
+          <span v-if="!props.row.new && editingDeviceId !== props.row.id">{{ props.row.name }}</span>
+          <div v-else-if="props.row.new || editingDeviceId === props.row.id" class="g-table__cell">
             <custom-input
               v-model="newDeviceName"
             />
@@ -37,9 +37,9 @@
               </button>
             </template>
             <template v-else>
-              <a :href="`/devices/${props.row.id}`" target="_blank" class="g-button g-button--edit g-table__actions-item">
+              <button @click="onEdit(props.row)" class="g-button g-button--edit g-table__actions-item">
                 <font-awesome-icon icon="edit" />
-              </a>
+              </button>
               <button class="g-button g-button--danger g-table__actions-item" @click="onRemove(props.row.id)">
                 <font-awesome-icon icon="trash" />
               </button>
@@ -76,7 +76,8 @@ export default {
       loading: false,
       page: 1,
 
-      newDeviceName: ''
+      newDeviceName: '',
+      editingDeviceId: null
     }
   },
 
@@ -92,7 +93,10 @@ export default {
     },
 
     creatingNew () {
-      this.newDeviceName = ''
+      if (this.creatingNew) {
+        this.newDeviceName = ''
+        this.editingDeviceId = null
+      }
     }
   },
 
@@ -116,7 +120,7 @@ export default {
   },
 
   methods: {
-    ...mapActions('devices', ['fetchDevices', 'removeDevice', 'createDevice']),
+    ...mapActions('devices', ['fetchDevices', 'removeDevice', 'createDevice', 'updateDevice']),
 
     debounceFetch: debounce(async function () {
       this.loading = true
@@ -159,6 +163,32 @@ export default {
         else this.fetchDevices(this.page)
       }).catch(e => {
         this.$toasted.error(e.response.data.error || e.response.data.message)
+      })
+    },
+
+    onEdit (device) {
+      this.$emit('set-creating-new', false)
+      this.$nextTick(() => {
+        if (this.editingDeviceId) {
+          this.editingDeviceId = this.editingDeviceId === device.id ? null : device.id
+          if (this.editingDeviceId)
+            this.newDeviceName = device.name
+          else if (this.newDeviceName !== device.name) {
+            this.updateDevice({
+              id: device.id,
+              name: this.newDeviceName
+            })
+              .then(() => {
+                this.$toasted.success('The device was successfully updated')
+              })
+              .catch(e => {
+                this.$toasted.error(e?.response?.data?.error || e?.response?.data?.message || e)
+              })
+          }
+        } else {
+          this.editingDeviceId = device.id
+          this.newDeviceName = device.name
+        }
       })
     },
 

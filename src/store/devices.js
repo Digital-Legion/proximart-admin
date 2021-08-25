@@ -23,6 +23,13 @@ export default {
       }
     },
 
+    setDeviceNameById (state, payload) {
+      const deviceIndex = state.devices?.items?.findIndex(d => d.id === payload.id)
+      if (deviceIndex !== -1) {
+        state.devices.items[deviceIndex].name = payload.name
+      }
+    },
+
     setAllBrands (state, payload) {
       state.allBrands = payload
     },
@@ -56,10 +63,11 @@ export default {
       })
     },
 
-    updateDevice (_, data) {
+    updateDevice ({ commit }, data) {
       return new Promise((resolve, reject) => {
-        axios.put(`/device/${data.id}`, data)
+        axios.put(`/device/${data.id}`, { name: data.name })
           .then(res => {
+            commit('setDeviceNameById', data)
             resolve(res)
           })
           .catch(e => {
