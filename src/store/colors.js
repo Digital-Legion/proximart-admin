@@ -16,9 +16,9 @@ export default {
     },
 
     removeColorById (state, id) {
-      const brandIndex = state.colors.items.findIndex(c => c.id === id)
-      if (brandIndex !== -1) {
-        state.colors.items.splice(brandIndex, 1)
+      const colorIndex = state.colors.items.findIndex(c => c.id === id)
+      if (colorIndex !== -1) {
+        state.colors.items.splice(colorIndex, 1)
         state.colors.meta.totalItems--
       }
     }

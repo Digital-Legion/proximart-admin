@@ -6,7 +6,7 @@
                          @input="onInput" :placeholder="placeholder"/>
       <phone-mask-input v-else-if="isPhone" :value="value" @input="onInput" :placeholder="placeholder"
                         @onValidate="$emit('set-phone-valid', $event.isValidByLibPhoneNumberJs)" :show-flag="true"/>
-      <input v-else :type="filteredType" class="custom-input__input" :class="{'custom-input__input--password': type === 'password'}" :value="value" @input="onInput"
+      <input v-else :type="filteredType" :readonly="readonly" class="custom-input__input" :class="{'custom-input__input--password': type === 'password'}" :value="value" @input="onInput"
              :placeholder="placeholder">
       <svg class="custom-input__password-eye" @click="$emit('toggle-password')" v-if="type === 'password'" width="16" height="16" viewBox="0 0 16 16"
            fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -47,6 +47,10 @@ export default {
       default: ''
     },
     isTextarea: {
+      type: Boolean,
+      default: false
+    },
+    readonly: {
       type: Boolean,
       default: false
     },

@@ -308,6 +308,7 @@ export default {
 
       waitGeneral: false,
       waitColor: false,
+      waitParameters: false,
       loading: false,
       dataUpdatedGeneral: false,
       dataUpdatedColors: false,
@@ -554,43 +555,44 @@ export default {
     },
 
     async onColorSave () {
-      this.waitColor = true
-      const colorData = {
-        id: this.currentColor.relationId,
-        product: parseInt(this.productId),
-        color: this.currentColorId,
-        files: this.currentColor.images.map(i => i?.file ?? i?.src ?? null).filter(i => i)
+      if (!this.waitColor) {
+        this.waitColor = true
+        const colorData = {
+          id: this.currentColor.relationId,
+          product: parseInt(this.productId),
+          color: this.currentColorId,
+          files: this.currentColor.images.map(i => i?.file ?? i?.src ?? null).filter(i => i)
+        }
+        const currentColor = this.currentColor
+        if (this.currentColor.new) {
+          await this.createProductColor(colorData)
+            .then(res => {
+              this.$toasted.success('The product color was successfully created')
+              currentColor.new = false
+              currentColor.saved = true
+              currentColor.relationId = res.data.id
+              this.$set(this.colors, currentColor.id.toString(), currentColor)
+              this.checkColorsUpdated()
+            })
+            .catch(e => {
+              console.error(e)
+              this.$toasted.error(e.response.data.message)
+            })
+        } else {
+          await this.updateProductColor(colorData)
+            .then(() => {
+              this.$toasted.success('The product color was successfully updated')
+              currentColor.saved = true
+              this.$set(this.colors, currentColor.id.toString(), currentColor)
+              this.checkColorsUpdated()
+            })
+            .catch(e => {
+              console.error(e)
+              this.$toasted.error(e.response.data.message)
+            })
+        }
+        this.waitColor = false
       }
-      const currentColor = this.currentColor
-      if (this.currentColor.new) {
-        await this.createProductColor(colorData)
-          .then(res => {
-            this.$toasted.success('The product color was successfully created')
-            currentColor.new = false
-            currentColor.saved = true
-            currentColor.relationId = res.data.id
-            this.$set(this.colors, currentColor.id.toString(), currentColor)
-            this.checkColorsUpdated()
-          })
-          .catch(e => {
-            console.error(e)
-            this.$toasted.error(e.response.data.message)
-          })
-      } else {
-        await this.updateProductColor(colorData)
-          .then(() => {
-            this.$toasted.success('The product color was successfully updated')
-            currentColor.saved = true
-            this.$set(this.colors, currentColor.id.toString(), currentColor)
-            this.checkColorsUpdated()
-          })
-          .catch(e => {
-            console.error(e)
-            this.$toasted.error(e.response.data.message)
-          })
-      }
-
-      this.waitColor = false
     },
 
     async onColorRemove () {
@@ -599,26 +601,30 @@ export default {
         cancelButtonText: 'Cancel',
         type: 'warning'
       }).then(async () => {
-        let error = false
-        const colorIdToRemove = this.currentColorId.toString(),
-          colors = Object.assign({}, this.colors)
-        if (!this.currentColor.new) {
-          await this.deleteProductColor({ id: this.currentColor.relationId })
-            .then(() => {
-              this.$toasted.success(`The color with id ${colorIdToRemove} was removed`)
-            })
-            .catch(e => {
-              error = true
-              console.error(e)
-              this.$toasted.error(e.response.data.message)
-            })
-        }
+        if (!this.waitColor) {
+          this.waitColor = true
+          let error = false
+          const colorIdToRemove = this.currentColorId.toString(),
+            colors = Object.assign({}, this.colors)
+          if (!this.currentColor.new) {
+            await this.deleteProductColor({ id: this.currentColor.relationId })
+              .then(() => {
+                this.$toasted.success(`The color with id ${colorIdToRemove} was removed`)
+              })
+              .catch(e => {
+                error = true
+                console.error(e)
+                this.$toasted.error(e.response.data.message)
+              })
+          }
 
-        if (!error) {
-          delete colors[colorIdToRemove]
-          this.$set(this, 'colors', colors)
-          this.currentColorId = this.colorsValues[0]?.id ?? null
-          this.checkColorsUpdated()
+          if (!error) {
+            delete colors[colorIdToRemove]
+            this.$set(this, 'colors', colors)
+            this.currentColorId = this.colorsValues[0]?.id ?? null
+            this.checkColorsUpdated()
+          }
+          this.waitColor = false
         }
       }).catch(() => {
       })
@@ -634,76 +640,80 @@ export default {
     },
 
     async onProductSave () {
-      const productData = {
-        name: this.name,
-        name__az: this.nameAz,
-        description: this.description,
-        description__az: this.descriptionAz,
-        slug: this.slug,
-        slug__az: this.slugAz,
-        hit: this.isHit,
-        main_page: this.showOnMainPage,
-        price: parseFloat(this.price ? this.price : '0'),
-        stock: parseInt(this.stock ? this.stock : '0'),
-        discount: parseFloat(this.discount ? this.discount : '0'),
-        brand: this.brand,
-        id: parseInt(this.productId),
-        category: this.category,
-        devices: this.devices?.length ? this.devices.join(',') : '',
-        youtube: this.youtubeVideos?.map(v => ({
-          url: v
-        })) || null
-      }
+      if (!this.waitGeneral) {
+        this.waitGeneral = true
 
-      if (this.imageFile) {
-        productData.file = this.imageFile
-      }
+        const productData = {
+          name: this.name,
+          name__az: this.nameAz,
+          description: this.description,
+          description__az: this.descriptionAz,
+          slug: this.slug,
+          slug__az: this.slugAz,
+          hit: this.isHit,
+          main_page: this.showOnMainPage,
+          price: parseFloat(this.price ? this.price : '0'),
+          stock: parseInt(this.stock ? this.stock : '0'),
+          discount: parseFloat(this.discount ? this.discount : '0'),
+          brand: this.brand,
+          id: parseInt(this.productId),
+          category: this.category,
+          devices: this.devices?.length ? this.devices.join(',') : '',
+          youtube: this.youtubeVideos?.map(v => ({
+            url: v
+          })) || null
+        }
 
-      this.waitGeneral = true
+        if (this.imageFile) {
+          productData.file = this.imageFile
+        }
 
-      let isProductUpdated = true
-      await this.updateProduct(productData)
-        .catch(e => {
-          isProductUpdated = 'no-product'
-          console.error(e)
-          this.$toasted.error(e.response.data.message)
-        })
+        let isProductUpdated = true
+        await this.updateProduct(productData)
+          .catch(e => {
+            isProductUpdated = 'no-product'
+            console.error(e)
+            this.$toasted.error(e.response.data.message)
+          })
 
-      if (isProductUpdated === true) {
-        this.$toasted.success('The product was successfully updated')
-      }
+        if (isProductUpdated === true) {
+          this.$toasted.success('The product was successfully updated')
+        }
 
-      this.dataUpdatedGeneral = false
-      this.waitGeneral = false
+        this.dataUpdatedGeneral = false
+        this.waitGeneral = false
 
-      if (this.category && !this.parameters.items) {
-        this.parametersLoading = true
-        await this.getParameters()
-        this.parametersLoading = false
-      } else {
-        this.$set(this, 'parameters', {})
+        if (this.category && !this.parameters.items) {
+          this.parametersLoading = true
+          await this.getParameters()
+          this.parametersLoading = false
+        } else {
+          this.$set(this, 'parameters', {})
+        }
       }
     },
 
     async onMetaSubmit (rawData) {
-      this.metaLoading = true
-      await this.saveMeta({
-        meta: {
-          ...rawData,
-          product: this.productId
-        },
-        metaId: this.meta?.id
-      })
-        .then(res => {
-          this.meta = res?.data
-          this.$toasted.success('Product\'s meta was successfully saved')
-          this.metaDataUpdated = false
+      if (!this.metaLoading) {
+        this.metaLoading = true
+        await this.saveMeta({
+          meta: {
+            ...rawData,
+            product: this.productId
+          },
+          metaId: this.meta?.id
         })
-        .catch(e => {
-          console.error(e)
-          this.$toasted.error(e.response.data.message)
-        })
-      this.metaLoading = false
+          .then(res => {
+            this.meta = res?.data
+            this.$toasted.success('Product\'s meta was successfully saved')
+            this.metaDataUpdated = false
+          })
+          .catch(e => {
+            console.error(e)
+            this.$toasted.error(e.response.data.message)
+          })
+        this.metaLoading = false
+      }
     },
 
     onNameInput () {
@@ -761,21 +771,25 @@ export default {
       })
     },
 
-    onParametersSubmit (data) {
-      this.saveParameters({
-        values: data.map(i => ({
-          ...i,
-          product: parseInt(this.productId)
-        }))
-      })
-        .then(() => {
-          this.$toasted.success('Product\'s parameters were successfully saved')
-          this.dataUpdatedParameters = false
+    async onParametersSubmit (data) {
+      if (!this.waitParameters) {
+        this.waitParameters = true
+        await this.saveParameters({
+          values: data.map(i => ({
+            ...i,
+            product: parseInt(this.productId)
+          }))
         })
-        .catch(e => {
-          console.error(e)
-          this.$toasted.error(e.response.data.message)
-        })
+          .then(() => {
+            this.$toasted.success('Product\'s parameters were successfully saved')
+            this.dataUpdatedParameters = false
+          })
+          .catch(e => {
+            console.error(e)
+            this.$toasted.error(e.response.data.message)
+          })
+        this.waitParameters = false
+      }
     }
   },
 

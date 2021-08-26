@@ -110,6 +110,29 @@ const routes = [
     ]
   },
   {
+    path: '/orders',
+    component: () => import('@/pages/orders/index.vue'),
+    children: [
+      {
+        path: '',
+        name: 'orders',
+        component: () => import('@/pages/orders/all.vue'),
+        meta: {
+          layout: 'auth-layout'
+        }
+      },
+      {
+        path: ':id',
+        name: 'orders-edit',
+        props: true,
+        component: () => import('@/pages/orders/order.vue'),
+        meta: {
+          layout: 'auth-layout'
+        }
+      }
+    ]
+  },
+  {
     path: '/products',
     component: () => import('@/pages/products/index.vue'),
     children: [

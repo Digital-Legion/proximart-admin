@@ -163,41 +163,42 @@ export default {
     },
 
     async submit (redirect) {
-      const data = {
-        name: this.name,
-        name__az: this.nameAz,
-        hex: this.color ? this.color.slice(1) : ''
+      if (!this.wait) {
+        this.wait = true
+        const data = {
+          name: this.name,
+          name__az: this.nameAz,
+          hex: this.color ? this.color.slice(1) : ''
+        }
+
+        if (!this.colorId) {
+          await this.createColor(data)
+            .then(() => {
+              if (redirect)
+                this.$router.push('/colors')
+              this.$toasted.success('The color was successfully created')
+            })
+            .catch(e => {
+              console.error(e)
+              this.$toasted.error(e.response.data.message)
+            })
+        } else {
+          data.id = this.colorId
+
+          await this.updateColor(data)
+            .then(() => {
+              this.$toasted.success('The color was successfully updated')
+            })
+            .catch(e => {
+              console.error(e)
+              this.$toasted.error(e.response.data.message)
+            })
+        }
+
+        this.dataUpdated = false
+        clearTimeout(this.timer)
+        this.wait = false
       }
-
-      this.wait = true
-
-      if (!this.colorId) {
-        await this.createColor(data)
-          .then(() => {
-            if (redirect)
-              this.$router.push('/colors')
-            this.$toasted.success('The color was successfully created')
-          })
-          .catch(e => {
-            console.error(e)
-            this.$toasted.error(e.response.data.message)
-          })
-      } else {
-        data.id = this.colorId
-
-        await this.updateColor(data)
-          .then(() => {
-            this.$toasted.success('The color was successfully updated')
-          })
-          .catch(e => {
-            console.error(e)
-            this.$toasted.error(e.response.data.message)
-          })
-      }
-
-      this.dataUpdated = false
-      this.wait = false
-      clearTimeout(this.timer)
     }
   },
 

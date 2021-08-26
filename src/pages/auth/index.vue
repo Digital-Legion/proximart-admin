@@ -53,17 +53,23 @@ export default {
     ...mapActions('auth', ['login', 'getProfile']),
 
     async submit () {
-      this.wait = true
-      await this.login({ email: this.email, password: this.password })
-        .then(async res => {
-          localStorage.setItem('token', res.data.access_token)
-          await this.getProfile()
-          this.$router.push('/').catch(() => {})
+      if (!this.wait) {
+        this.wait = true
+        await this.login({
+          email: this.email,
+          password: this.password
         })
-        .catch(e => {
-          this.$toasted.error(e.response.data.error || e.response.data.message)
-        })
-      this.wait = false
+          .then(async res => {
+            localStorage.setItem('token', res.data.access_token)
+            await this.getProfile()
+            this.$router.push('/').catch(() => {
+            })
+          })
+          .catch(e => {
+            this.$toasted.error(e.response.data.error || e.response.data.message)
+          })
+        this.wait = false
+      }
     }
   }
 }

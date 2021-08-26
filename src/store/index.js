@@ -8,6 +8,7 @@ import colors from '@/store/colors'
 import banners from '@/store/banners'
 import products from '@/store/products'
 import parameters from '@/store/parameters'
+import orders from '@/store/orders'
 import auth from '@/store/auth'
 
 Vue.use(Vuex)
@@ -19,6 +20,7 @@ export default new Vuex.Store({
     devices,
     colors,
     banners,
+    orders,
     products,
     parameters,
     auth

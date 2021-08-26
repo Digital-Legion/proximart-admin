@@ -269,51 +269,53 @@ export default {
     },
 
     async submit (redirect) {
-      const data = {
-        name: this.name,
-        name__az: this.nameAz,
-        description: this.description,
-        description__az: this.descriptionAz,
-        slug: this.slug,
-        slug__az: this.slugAz,
-        alt: this.alt
+      if (!this.wait) {
+        this.wait = true
+
+        const data = {
+          name: this.name,
+          name__az: this.nameAz,
+          description: this.description,
+          description__az: this.descriptionAz,
+          slug: this.slug,
+          slug__az: this.slugAz,
+          alt: this.alt
+        }
+
+        if (this.parent)
+          data.parent = this.parent.id ?? this.parent
+
+        if (this.imageFile)
+          data.file = this.imageFile
+
+        if (!this.categoryId) {
+          await this.createCategory(data)
+            .then(() => {
+              if (redirect)
+                this.$router.push('/categories')
+              this.$toasted.success('The category was successfully created')
+            })
+            .catch(e => {
+              console.error(e)
+              this.$toasted.error(e.response.data.message)
+            })
+        } else {
+          data.id = this.categoryId
+
+          await this.updateCategory(data)
+            .then(() => {
+              this.$toasted.success('The category was successfully updated')
+            })
+            .catch(e => {
+              console.error(e)
+              this.$toasted.error(e.response.data.message)
+            })
+        }
+
+        this.dataUpdated = false
+        clearTimeout(this.timer)
+        this.wait = false
       }
-
-      if (this.parent)
-        data.parent = this.parent.id ?? this.parent
-
-      if (this.imageFile)
-        data.file = this.imageFile
-
-      this.wait = true
-
-      if (!this.categoryId) {
-        await this.createCategory(data)
-          .then(() => {
-            if (redirect)
-              this.$router.push('/categories')
-            this.$toasted.success('The category was successfully created')
-          })
-          .catch(e => {
-            console.error(e)
-            this.$toasted.error(e.response.data.message)
-          })
-      } else {
-        data.id = this.categoryId
-
-        await this.updateCategory(data)
-          .then(() => {
-            this.$toasted.success('The category was successfully updated')
-          })
-          .catch(e => {
-            console.error(e)
-            this.$toasted.error(e.response.data.message)
-          })
-      }
-
-      this.dataUpdated = false
-      this.wait = false
-      clearTimeout(this.timer)
     },
 
     onNameInput () {

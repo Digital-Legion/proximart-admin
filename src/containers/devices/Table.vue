@@ -73,6 +73,7 @@ export default {
 
   data () {
     return {
+      wait: false,
       loading: false,
       page: 1,
 
@@ -134,47 +135,54 @@ export default {
         cancelButtonText: 'Cancel',
         type: 'warning'
       }).then(async () => {
-        this.loading = true
-        await this.removeDevice(id)
-          .then(() => {
-            this.$message({
-              type: 'success',
-              message: `Device with id ${id} was removed`
+        if (!this.loading) {
+          this.loading = true
+          await this.removeDevice(id)
+            .then(() => {
+              this.$message({
+                type: 'success',
+                message: `Device with id ${id} was removed`
+              })
             })
-          })
-          .catch(e => {
-            console.error(e)
-            this.$message({
-              type: 'error',
-              message: e.response.data.message
+            .catch(e => {
+              console.error(e)
+              this.$message({
+                type: 'error',
+                message: e.response.data.message
+              })
             })
-          })
-        this.loading = false
+          this.loading = false
+        }
       }).catch(() => {})
     },
 
-    onCreate () {
-      this.createDevice({
-        name: this.newDeviceName
-      }).then(() => {
-        this.$emit('set-creating-new', false)
-        if (this.page !== 1)
-          this.page = 1
-        else this.fetchDevices(this.page)
-      }).catch(e => {
-        this.$toasted.error(e.response.data.error || e.response.data.message)
-      })
+    async onCreate () {
+      if (!this.wait) {
+        this.wait = true
+        await this.createDevice({
+          name: this.newDeviceName
+        }).then(() => {
+          this.$emit('set-creating-new', false)
+          if (this.page !== 1)
+            this.page = 1
+          else this.fetchDevices(this.page)
+        }).catch(e => {
+          this.$toasted.error(e.response.data.error || e.response.data.message)
+        })
+        this.wait = false
+      }
     },
 
     onEdit (device) {
       this.$emit('set-creating-new', false)
-      this.$nextTick(() => {
+      this.$nextTick(async () => {
         if (this.editingDeviceId) {
           this.editingDeviceId = this.editingDeviceId === device.id ? null : device.id
           if (this.editingDeviceId)
             this.newDeviceName = device.name
-          else if (this.newDeviceName !== device.name) {
-            this.updateDevice({
+          else if (this.newDeviceName !== device.name && !this.wait) {
+            this.wait = true
+            await this.updateDevice({
               id: device.id,
               name: this.newDeviceName
             })
@@ -184,6 +192,7 @@ export default {
               .catch(e => {
                 this.$toasted.error(e?.response?.data?.error || e?.response?.data?.message || e)
               })
+            this.wait = false
           }
         } else {
           this.editingDeviceId = device.id

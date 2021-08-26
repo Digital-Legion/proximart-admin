@@ -100,6 +100,7 @@ export default {
 
   data () {
     return {
+      wait: false,
       loading: false,
       page: 1,
 
@@ -166,38 +167,44 @@ export default {
         cancelButtonText: 'Cancel',
         type: 'warning'
       }).then(async () => {
-        this.loading = true
-        await this.removeProduct(id)
-          .then(() => {
-            this.$message({
-              type: 'success',
-              message: `Product with id ${id} was removed`
+        if (!this.loading) {
+          this.loading = true
+          await this.removeProduct(id)
+            .then(() => {
+              this.$message({
+                type: 'success',
+                message: `Product with id ${id} was removed`
+              })
             })
-          })
-          .catch(e => {
-            console.error(e)
-            this.$message({
-              type: 'error',
-              message: e.response.data.message
+            .catch(e => {
+              console.error(e)
+              this.$message({
+                type: 'error',
+                message: e.response.data.message
+              })
             })
-          })
-        this.loading = false
+          this.loading = false
+        }
       }).catch(() => {})
     },
 
-    onCreate () {
-      this.createProduct({
-        name: this.newProductName,
-        name__az: this.newProductNameAz,
-        slug: this.newProductSlug
-      }).then(() => {
-        this.$emit('set-creating-new', false)
-        if (this.page !== 1)
-          this.page = 1
-        else this.fetchProducts(this.page)
-      }).catch(e => {
-        this.$toasted.error(e.response.data.error || e.response.data.message)
-      })
+    async onCreate () {
+      if (!this.wait) {
+        this.wait = true
+        await this.createProduct({
+          name: this.newProductName,
+          name__az: this.newProductNameAz,
+          slug: this.newProductSlug
+        }).then(() => {
+          this.$emit('set-creating-new', false)
+          if (this.page !== 1)
+            this.page = 1
+          else this.fetchProducts(this.page)
+        }).catch(e => {
+          this.$toasted.error(e.response.data.error || e.response.data.message)
+        })
+        this.wait = false
+      }
     },
 
     onRemoveLocal () {

@@ -8,12 +8,12 @@
 
     <page-header :title="pageTitle">
       <button class="g-button" @click="submit(true)" :disabled="wait">
-        <font-awesome-icon icon="save" />
+        <font-awesome-icon icon="save"/>
         <span>Save</span>
         <span v-if="dataUpdated"> (autosave in {{ timeLeftToUpdate }})</span>
       </button>
       <router-link class="g-button g-button--danger" to="/brands">
-        <font-awesome-icon icon="ban" />
+        <font-awesome-icon icon="ban"/>
         <span>Cancel</span>
       </router-link>
     </page-header>
@@ -63,9 +63,10 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
+import { mapActions, mapState } from 'vuex'
 import DropImage from '@/components/DropImage'
 import { debounce } from '@/utils/debounce'
+
 const slugify = require('slugify')
 
 export default {
@@ -137,8 +138,9 @@ export default {
       vm.imageFile,
       vm.categories
     ], () => {
-      if (this.brandId)
+      if (this.brandId) {
         this.dataUpdate()
+      }
     })
   },
 
@@ -169,8 +171,9 @@ export default {
 
     onDataUpdate: (debounce(function () {
       this.dataUpdated = false
-      if (this.timer === null)
+      if (this.timer === null) {
         this.submit()
+      }
     }, (10 + 1) * 1000)), // update data after N seconds after it's been changed with debounce
 
     startTimer () {
@@ -186,47 +189,51 @@ export default {
     },
 
     async submit (redirect) {
-      const data = {
-        name: this.name,
-        slug: this.slug,
-        alt: this.alt
+      if (!this.wait) {
+        this.wait = true
+        const data = {
+          name: this.name,
+          slug: this.slug,
+          alt: this.alt
+        }
+
+        if (this.categories) {
+          data.categories = this.categories
+        }
+
+        if (this.imageFile) {
+          data.file = this.imageFile
+        }
+
+        if (!this.brandId) {
+          await this.createBrand(data)
+            .then(() => {
+              if (redirect) {
+                this.$router.push('/brands')
+              }
+              this.$toasted.success('The brand was successfully created')
+            })
+            .catch(e => {
+              console.error(e)
+              this.$toasted.error(e.response.data.message)
+            })
+        } else {
+          data.id = this.brandId
+
+          await this.updateBrand(data)
+            .then(() => {
+              this.$toasted.success('The brand was successfully updated')
+            })
+            .catch(e => {
+              console.error(e)
+              this.$toasted.error(e.response.data.message)
+            })
+        }
+
+        this.dataUpdated = false
+        clearTimeout(this.timer)
+        this.wait = false
       }
-
-      if (this.categories)
-        data.categories = this.categories
-
-      if (this.imageFile)
-        data.file = this.imageFile
-
-      this.wait = true
-
-      if (!this.brandId) {
-        await this.createBrand(data)
-          .then(() => {
-            if (redirect)
-              this.$router.push('/brands')
-            this.$toasted.success('The brand was successfully created')
-          })
-          .catch(e => {
-            console.error(e)
-            this.$toasted.error(e.response.data.message)
-          })
-      } else {
-        data.id = this.brandId
-
-        await this.updateBrand(data)
-          .then(() => {
-            this.$toasted.success('The brand was successfully updated')
-          })
-          .catch(e => {
-            console.error(e)
-            this.$toasted.error(e.response.data.message)
-          })
-      }
-
-      this.dataUpdated = false
-      this.wait = false
-      clearTimeout(this.timer)
     },
 
     onNameInput () {
