@@ -22,6 +22,19 @@ export default {
         id: 'small',
         value: false
       }
+    },
+
+    bannerColors: {
+      black: {
+        name: 'Black',
+        id: 'black',
+        value: 'black'
+      },
+      white: {
+        name: 'White',
+        id: 'white',
+        value: 'white'
+      }
     }
   },
 

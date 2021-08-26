@@ -32,14 +32,14 @@
 
       <div class="add-edit-page__left">
         <custom-input
-          class="mb-20"
+          :class="[bannerType.id === 'small' ? 'mb-104' : 'mb-20']"
           v-model="name"
           label="Name"
           placeholder="Enter name"
           v-if="activeLang === 'ru'"
         />
         <custom-input
-          class="mb-20"
+          :class="[bannerType.id === 'small' ? 'mb-104' : 'mb-20']"
           v-model="nameAz"
           label="Name"
           placeholder="Enter name"
@@ -60,6 +60,15 @@
           :options="Object.values(bannerTypes).filter(b => b.id !== 'all')"
           label="Banner type"
           placeholder="Select the banner type"
+        />
+        <custom-select
+          v-if="bannerType.id === 'small'"
+          class="mb-20"
+          :value="bannerColor ? bannerColor.id : null"
+          @set-value="bannerColor = bannerColors[$event]"
+          :options="Object.values(bannerColors)"
+          label="Banner color"
+          placeholder="Select the banner color"
         />
         <drop-image
           label="Mobile image (all languages)"
@@ -118,7 +127,8 @@ export default {
       deskImageFile: null,
       mobImageUrl: null,
       mobImageFile: null,
-      bannerType: this.$store.state.banners.bannerTypes.large
+      bannerType: this.$store.state.banners.bannerTypes.large,
+      bannerColor: this.$store.state.banners.bannerColors.black
     }
   },
 
@@ -130,7 +140,8 @@ export default {
       vm.deskImageUrl,
       vm.deskImageFile,
       vm.mobImageUrl,
-      vm.mobImageFile
+      vm.mobImageFile,
+      vm.bannerColor
     ], () => {
       if (!this.justSetInitialData) {
         this.$emit('set-updated', true)
@@ -149,7 +160,7 @@ export default {
 
   computed: {
     ...mapState(['activeLang', 'defaultActiveLang', 'langs']),
-    ...mapState('banners', ['bannerTypes'])
+    ...mapState('banners', ['bannerTypes', 'bannerColors'])
   },
 
   methods: {
@@ -166,6 +177,7 @@ export default {
         this.bannerType = this.initialData.big_banner
           ? this.$store.state.banners.bannerTypes.large
           : this.$store.state.banners.bannerTypes.small
+        this.bannerColor = this.initialData.hex === 'black' ? this.$store.state.banners.bannerColors.black : this.$store.state.banners.bannerColors.white
 
         this.justSetInitialData = true
         this.initialDataSet = true
@@ -181,6 +193,9 @@ export default {
         big_banner: this.bannerType.value,
         product: this.productId
       }
+
+      if (this.bannerType.id === 'small')
+        data.hex = this.bannerColor.value
 
       this.$emit('set-loading', true)
       if (this.bannerId) {
