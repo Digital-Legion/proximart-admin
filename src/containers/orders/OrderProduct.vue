@@ -17,8 +17,8 @@
         <div class="order-product__info-item" v-if="product && product.discount">
           Discount: {{ product.discount }}%
         </div>
-        <div class="order-product__info-item" v-if="product && product.colors">
-          Color: {{ product.colors }}
+        <div class="order-product__info-item" v-if="product && product.color_title">
+          Color: {{ product.color_title }}
         </div>
         <div class="order-product__info-item" v-if="product && product.devices">
           Variant: {{ product.devices }}
