@@ -10,6 +10,7 @@ import products from '@/store/products'
 import parameters from '@/store/parameters'
 import orders from '@/store/orders'
 import auth from '@/store/auth'
+import leads from '@/store/leads'
 
 Vue.use(Vuex)
 
@@ -23,6 +24,7 @@ export default new Vuex.Store({
     orders,
     products,
     parameters,
+    leads,
     auth
   },
 

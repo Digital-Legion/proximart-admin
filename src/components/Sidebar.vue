@@ -62,6 +62,12 @@
                 <span>Orders</span>
               </router-link>
             </li>
+            <li>
+              <router-link to="/leads" class="g-sidebar__nav-item" :class="{'router-link-exact-active': $route.path.startsWith('/leads')}">
+                <font-awesome-icon icon="user-friends" class="g-sidebar__nav-icon" />
+                <span>Leads</span>
+              </router-link>
+            </li>
           </ul>
         </nav>
         <div class="g-sidebar__toggler" @click="toggleMenu" v-if="isMobile()">

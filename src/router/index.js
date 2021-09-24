@@ -185,6 +185,14 @@ const routes = [
     meta: {
       layout: 'auth-layout'
     }
+  },
+  {
+    path: '/leads',
+    name: 'leads',
+    component: () => import('@/pages/leads/index.vue'),
+    meta: {
+      layout: 'auth-layout'
+    }
   }
 ]
 
