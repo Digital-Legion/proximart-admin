@@ -126,6 +126,17 @@ export default {
             reject(e)
           })
       })
+    },
+
+    async saveMeta (_, data) {
+      const formData = new FormData()
+      Object.entries(data.meta).forEach(entry => {
+        formData.append(entry[0], entry[1])
+      })
+
+      if (data.metaId)
+        return await axios.put(`/category/meta/${data.metaId}`, formData)
+      return await axios.post('/category/meta', formData)
     }
   }
 }

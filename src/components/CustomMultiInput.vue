@@ -1,12 +1,27 @@
 <template>
   <div class="custom-multi-input">
-    <div class="g-flex mb-20" v-for="(input, index) in inputValues" :key="index">
-      <custom-input
-        class="mr-20"
-        :value="input"
-        @input="onInput(index, $event)"
-        :placeholder="placeholder"
-      />
+    <div class="g-flex g-flex--ai-fe mb-20" v-for="(input, index) in inputValues" :key="index">
+      <template v-for="(vt, i) in valueTemplate">
+        <custom-input
+          :key="`${vt.prop}-${i}`"
+          class="mr-20"
+          :value="input[vt.prop]"
+          :name="vt.name"
+          @input="onInput(index, vt.prop, $event)"
+          :placeholder="vt.placeholder"
+          :label="index === 0 ? vt.label : null"
+          v-if="activeLang === 'ru' || vt.isAllLang"
+        />
+        <custom-input
+          :key="`${vt.prop}-${i}-az`"
+          class="mr-20"
+          :value="input[`${vt.prop}__az`]"
+          @input="onInput(index, `${vt.prop}__az`, $event)"
+          :placeholder="vt.placeholder"
+          :label="index === 0 ? vt.label : null"
+          v-else-if="activeLang === 'az'"
+        />
+      </template>
       <button class="g-button g-button--icon g-button--danger" @click="onRemove(index)">
         <font-awesome-icon icon="trash"/>
       </button>
@@ -18,6 +33,8 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
+
 export default {
   name: 'CustomMultiInput',
 
@@ -28,15 +45,17 @@ export default {
   props: {
     value: {
       type: Array,
-      default: () => []
+      required: true
     },
-    placeholder: {
-      type: String,
-      default: 'Enter a value'
+    valueTemplate: {
+      type: Array,
+      required: true
     }
   },
 
   computed: {
+    ...mapState(['activeLang']),
+
     inputs () {
       const inputs = {}
       if (this.value) {
@@ -53,9 +72,9 @@ export default {
   },
 
   methods: {
-    onInput (inputIndex, inputValue) {
+    onInput (inputIndex, inputProp, inputValue) {
       const inputs = Object.assign({}, this.inputs)
-      inputs[inputIndex.toString()] = inputValue
+      inputs[inputIndex.toString()][inputProp] = inputValue
       this.$emit('input', Object.values(inputs))
     },
 
@@ -67,13 +86,9 @@ export default {
 
     addInput () {
       const inputs = this.inputValues.slice()
-      inputs.push('')
+      inputs.push({})
       this.$emit('input', inputs)
     }
   }
 }
 </script>
-
-<style scoped>
-
-</style>

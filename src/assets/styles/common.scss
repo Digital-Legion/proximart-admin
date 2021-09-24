@@ -59,6 +59,10 @@ $--color-primary: $turquoise-dark !default;
   &-justify {
     justify-content: space-between;
   }
+
+  &--ai-fe {
+    align-items: flex-end;
+  }
 }
 
 @media (max-width: 1100px) {

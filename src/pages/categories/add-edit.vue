@@ -18,7 +18,7 @@
       </router-link>
     </page-header>
     <page-tabs @input="setActiveLang" :value="activeLang" :options="filteredLangs" />
-    <page-box :double="true">
+    <page-box :double="true" class="mb-20">
       <div class="add-edit-page__left">
         <custom-input
           v-model="name"
@@ -95,6 +95,16 @@
         />
       </div>
     </page-box>
+
+    <meta-form
+      class="mb-20"
+      @submit="onMetaSubmit"
+      @set-updated="metaDataUpdated = $event"
+      :data-updated="metaDataUpdated"
+      :initial-data="meta"
+      :loading="metaLoading"
+      :url="`https://proximart.az${activeLang === 'az' ? '/az' : ''}/catalog?cat=${categoryId}`"
+    />
   </div>
 </template>
 
@@ -109,6 +119,7 @@ export default {
 
   components: {
     DropImage,
+    MetaForm: () => import('@/containers/common/MetaForm'),
     PageHeader: () => import('@/components/PageHeader'),
     PageTabs: () => import('@/components/PageTabs'),
     PageBox: () => import('@/components/PageBox'),
@@ -132,6 +143,9 @@ export default {
       slugBasedOnName: true,
       slugBasedOnNameAz: true,
 
+      meta: null,
+      metaLoading: false,
+
       nameError: '',
       nameAzError: '',
       descriptionError: '',
@@ -145,7 +159,8 @@ export default {
       dataUpdated: false,
       timer: null,
       timeLeftToUpdate: 0,
-      dontSendData: false
+      dontSendData: false,
+      metaDataUpdated: false
     }
   },
 
@@ -167,6 +182,7 @@ export default {
           this.slugAz = data.slug__az ?? ''
           this.image = data.image?.url ?? ''
           this.parent = data.parent
+          this.meta = data.meta
 
           this.slugBasedOnName = !this.slug
           this.slugBasedOnNameAz = !this.slugAz
@@ -238,7 +254,7 @@ export default {
 
   methods: {
     ...mapMutations(['setActiveLang']),
-    ...mapActions('categories', ['fetchCascaderCategories', 'createCategory', 'fetchCategory', 'updateCategory']),
+    ...mapActions('categories', ['fetchCascaderCategories', 'createCategory', 'fetchCategory', 'updateCategory', 'saveMeta']),
 
     dataUpdate () {
       this.dataUpdated = true
@@ -266,6 +282,29 @@ export default {
           this.timer = null
         }
       }, 1000)
+    },
+
+    async onMetaSubmit (rawData) {
+      if (!this.metaLoading) {
+        this.metaLoading = true
+        await this.saveMeta({
+          meta: {
+            ...rawData,
+            category: this.categoryId
+          },
+          metaId: this.meta?.id
+        })
+          .then(res => {
+            this.meta = res?.data
+            this.$toasted.success('Categorie\'s meta was successfully saved')
+            this.metaDataUpdated = false
+          })
+          .catch(e => {
+            console.error(e)
+            this.$toasted.error(e.response.data.message)
+          })
+        this.metaLoading = false
+      }
     },
 
     async submit (redirect) {

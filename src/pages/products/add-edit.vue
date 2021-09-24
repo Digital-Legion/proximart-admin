@@ -142,6 +142,29 @@
         <h2 class="g-subtitle mt-20">Youtube videos</h2>
         <custom-multi-input
           v-model="youtubeVideos"
+          :value-template="[
+            {
+              label: 'Title',
+              name: 'title',
+              prop: 'title',
+              placeholder: 'Enter the title',
+              isAllLang: false
+            },
+            {
+              label: 'Poster url (all langs)',
+              name: 'url',
+              prop: 'poster',
+              placeholder: 'Enter the poster url',
+              isAllLang: true
+            },
+            {
+              label: 'Youtube link (all langs)',
+              name: 'url',
+              prop: 'url',
+              placeholder: 'e.g. https://youtu.be/UxpRVIRsgh8',
+              isAllLang: true
+            }
+          ]"
           placeholder="Enter a YouTube video link"
         />
       </template>
@@ -351,7 +374,7 @@ export default {
             id: data.parameters?.id || null
           }
           if (data.youtube) {
-            this.youtubeVideos = data.youtube.map(v => v.url)
+            this.youtubeVideos = data.youtube
           }
           if (data.colors) {
             const colors = {}
@@ -659,9 +682,7 @@ export default {
           id: parseInt(this.productId),
           category: this.category,
           devices: this.devices?.length ? this.devices.join(',') : '',
-          youtube: this.youtubeVideos?.map(v => ({
-            url: v
-          })) || null
+          youtube: this.youtubeVideos || null
         }
 
         if (this.imageFile) {
