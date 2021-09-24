@@ -136,6 +136,10 @@
           label="Hit"
           v-model="isHit"
         />
+        <custom-checkbox
+          label="Credit"
+          v-model="canCredit"
+        />
       </div>
 
       <template v-slot:bottom-content>
@@ -300,6 +304,7 @@ export default {
       youtubeVideos: null,
       isHit: false,
       showOnMainPage: false,
+      canCredit: false,
 
       banner: null,
       bannerLoading: false,
@@ -370,6 +375,7 @@ export default {
           this.banner = data.banners?.[0] || null
           this.isHit = data.hit
           this.showOnMainPage = data.main_page
+          this.canCredit = data.credit
           this.parameters = {
             id: data.parameters?.id || null
           }
@@ -682,7 +688,8 @@ export default {
           id: parseInt(this.productId),
           category: this.category,
           devices: this.devices?.length ? this.devices.join(',') : '',
-          youtube: this.youtubeVideos || null
+          youtube: this.youtubeVideos || null,
+          credit: this.canCredit
         }
 
         if (this.imageFile) {
