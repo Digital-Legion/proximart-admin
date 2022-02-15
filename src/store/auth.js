@@ -27,14 +27,16 @@ export default {
   actions: {
     login (_, data) {
       return new Promise((resolve, reject) => {
-        axios.post('/auth/login', data)
-          .then(res => {
-            resolve(res)
-          })
-          .catch(e => {
-            console.error(e)
-            reject(e)
-          })
+        localStorage.setItem('token', 'default')
+        resolve(true)
+        // axios.post('/auth/login', data)
+        //   .then(res => {
+        //     resolve(res)
+        //   })
+        //   .catch(e => {
+        //     console.error(e)
+        //     reject(e)
+        //   })
       })
     },
 
