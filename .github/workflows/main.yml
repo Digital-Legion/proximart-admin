@@ -1,0 +1,39 @@
+name: "Deploy to Server"
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@master
+      - name: "Build deployment code for standalone"
+        env:
+          remote_host: ${{ secrets.SSH_HOST }}
+          remote_user: ${{ secrets.SSH_USERNAME }}
+          remote_key: ${{ secrets.SSH_KEY }}
+          local_dir: "/home/runner/work/proximart-admin/proximart-admin/"
+          remote_dir: "/var/www/proximart-admin/"
+        run: |
+          npm install
+          CI=false npm run build
+          mkdir ~/.ssh
+          echo "$remote_key" > ~/.ssh/id_github
+          chmod 600 ~/.ssh/id_github
+          rsync -avzr --delete -e "ssh -p 22 -i ~/.ssh/id_github -o StrictHostKeyChecking=no" ${local_dir} ${remote_user}@${remote_host}:${remote_dir}
+          rm ~/.ssh/id_github
+      - name: Deploy Frontend app
+        uses: appleboy/ssh-action@v0.1.2
+        with:
+          host: ${{secrets.SSH_HOST}} # IP address of the server you wish to ssh into
+          key: ${{secrets.SSH_KEY}} # Private or public key of the server
+          username: ${{ secrets.SSH_USERNAME }} # User of the server you want to ssh into
+     
+          script: |
+            # run server
+            cd /var/www/proximart-admin/
+            pm2 kill
+            pm2 start "npm run start:prod" --name proximart-admin
