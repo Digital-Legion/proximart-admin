@@ -35,5 +35,4 @@ jobs:
             cd /var/www/proximart-admin/
             npm install
             npm run build
-            pm2 kill
-            pm2 start "npm run start:prod" --name proximart-admin
+            npm run start:prod
