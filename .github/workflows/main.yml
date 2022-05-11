@@ -18,8 +18,6 @@ jobs:
           local_dir: "/home/runner/work/proximart-admin/proximart-admin/"
           remote_dir: "/var/www/proximart-admin/"
         run: |
-          npm install
-          CI=false npm run build
           mkdir ~/.ssh
           echo "$remote_key" > ~/.ssh/id_github
           chmod 600 ~/.ssh/id_github
@@ -35,5 +33,7 @@ jobs:
           script: |
             # run server
             cd /var/www/proximart-admin/
+            npm install
+            npm run build
             pm2 kill
             pm2 start "npm run start:prod" --name proximart-admin
