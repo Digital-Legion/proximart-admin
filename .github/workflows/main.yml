@@ -35,4 +35,3 @@ jobs:
             cd /var/www/proximart-admin/
             npm install
             npm run build
-            npm run start:prod
