@@ -2,11 +2,11 @@
   <div class="custom-input">
     <span class="g-label" v-if="label">{{ label }}</span>
     <div class="custom-input__input-wrapper">
-      <textarea-autosize v-if="isTextarea" :rows="1" :max-rows="5" class="custom-input__input custom-input__input--textarea" :value="value"
-                         @input="onInput" :placeholder="placeholder"/>
+      <textarea-autosize v-if="isTextarea" :rows="1" :max-rows="5" class="custom-input__input custom-input__input--textarea"
+                         @input="onInput" :placeholder="placeholder" />
       <phone-mask-input v-else-if="isPhone" :value="value" @input="onInput" :placeholder="placeholder"
                         @onValidate="$emit('set-phone-valid', $event.isValidByLibPhoneNumberJs)" :show-flag="true"/>
-      <input v-else :type="filteredType" :readonly="readonly" class="custom-input__input" :class="{'custom-input__input--password': type === 'password'}" :value="value" @input="onInput"
+      <input v-else :type="filteredType" :readonly="readonly" class="custom-input__input" :class="{'custom-input__input--password': type === 'password'}" @input="onInput"
              :placeholder="placeholder">
       <svg class="custom-input__password-eye" @click="$emit('toggle-password')" v-if="type === 'password'" width="16" height="16" viewBox="0 0 16 16"
            fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -16,10 +16,10 @@
       </svg>
     </div>
     <div v-if="showCharacterCount" class="custom-input__character-count">
-      <span class="current">{{ value.length }}</span>
-      <template v-if="maxCharacters">
+      <span class="current">{{ currentLength || value.length }}</span>
+      <template v-if="maxCharacters || maxCharactersProp">
         <span>/</span>
-        <span class="max">{{ maxCharacters }}</span>
+        <span class="max">{{ maxCharacters || maxCharactersProp }}</span>
       </template>
     </div>
     <div class="g-error" v-if="error"></div>
@@ -66,6 +66,14 @@ export default {
       type: Number,
       default: 0
     },
+    currentLength: {
+      type: Number,
+      default: 0
+    },
+    maxCharactersProp: {
+      type: [String, Number],
+      default: 0
+    },
     showPassword: {
       type: Boolean,
       default: false
@@ -85,10 +93,19 @@ export default {
     onInput (e) {
       if (this.isTextarea) {
         this.$emit('input', this.maxCharacters ? e.slice(0, this.maxCharacters) : e)
+        this.$nextTick(() => {
+          const textarea = this.$el.querySelector('textarea')?.__vue__
+          if (textarea) {
+            textarea.val = this.value
+          }
+        })
       } else if (this.isPhone) {
         this.$emit('input', e)
       } else {
         this.$emit('input', this.maxCharacters ? e.target.value.slice(0, this.maxCharacters) : e.target.value)
+        this.$nextTick(() => {
+          e.target.value = this.value
+        })
       }
     }
   }

@@ -33,6 +33,8 @@
                 label="Meta title"
                 placeholder="Enter meta title"
                 v-if="activeLang === 'ru'"
+                show-character-count
+                :max-characters="60"
               />
               <custom-input
                 class="mb-20"
@@ -40,6 +42,8 @@
                 label="Meta title"
                 placeholder="Enter meta title"
                 v-else-if="activeLang === 'az'"
+                show-character-count
+                :max-characters="60"
               />
               <custom-input
                 class="mb-20"
@@ -48,6 +52,8 @@
                 label="Meta description"
                 placeholder="Enter meta description"
                 v-if="activeLang === 'ru'"
+                show-character-count
+                :max-characters="160"
               />
               <custom-input
                 class="mb-20"
@@ -56,20 +62,32 @@
                 label="Meta description"
                 placeholder="Enter meta description"
                 v-else-if="activeLang === 'az'"
+                show-character-count
+                :max-characters="160"
               />
               <custom-input
                 class="mb-20"
-                v-model="metaKeywords"
+                :value="metaKeywords"
+                @input="onKeywordsChange('metaKeywords', $event)"
                 label="Meta keywords"
                 placeholder="Enter meta keywords (separate them by comma)"
                 v-if="activeLang === 'ru'"
+                show-character-count
+                :current-length="getKeywordsLength(metaKeywords)"
+                max-characters-prop="10 keywords"
+                enforce-value
               />
               <custom-input
                 class="mb-20"
-                v-model="metaKeywordsAz"
+                :value="metaKeywordsAz"
+                @input="onKeywordsChange('metaKeywordsAz', $event)"
                 label="Meta keywords"
                 placeholder="Enter meta keywords (separate them by comma)"
                 v-else-if="activeLang === 'az'"
+                show-character-count
+                :current-length="getKeywordsLength(metaKeywordsAz)"
+                max-characters-prop="10 keywords"
+                enforce-value
               />
             </div>
           </template>
@@ -81,6 +99,8 @@
               label="Facebook title"
               placeholder="Enter facebook title"
               v-if="activeLang === 'ru'"
+              show-character-count
+              :max-characters="60"
             />
             <custom-input
               class="mb-20"
@@ -88,6 +108,8 @@
               label="Facebook title"
               placeholder="Enter facebook title"
               v-else-if="activeLang === 'az'"
+              show-character-count
+              :max-characters="60"
             />
             <custom-input
               v-model="facebookDescription"
@@ -95,6 +117,8 @@
               label="Facebook description"
               placeholder="Enter facebook description"
               v-if="activeLang === 'ru'"
+              show-character-count
+              :max-characters="160"
             />
             <custom-input
               v-model="facebookDescriptionAz"
@@ -102,6 +126,8 @@
               label="Facebook description"
               placeholder="Enter facebook description"
               v-else-if="activeLang === 'az'"
+              show-character-count
+              :max-characters="160"
             />
           </div>
           <div class="add-edit-page__right">
@@ -111,6 +137,8 @@
               label="Twitter title"
               placeholder="Enter twitter title"
               v-if="activeLang === 'ru'"
+              show-character-count
+              :max-characters="60"
             />
             <custom-input
               class="mb-20"
@@ -118,6 +146,8 @@
               label="Twitter title"
               placeholder="Enter twitter title"
               v-else-if="activeLang === 'az'"
+              show-character-count
+              :max-characters="60"
             />
             <custom-input
               v-model="twitterDescription"
@@ -125,6 +155,8 @@
               label="Twitter description"
               placeholder="Enter twitter description"
               v-if="activeLang === 'ru'"
+              show-character-count
+              :max-characters="160"
             />
             <custom-input
               v-model="twitterDescriptionAz"
@@ -132,6 +164,8 @@
               label="Twitter description"
               placeholder="Enter twitter description"
               v-else-if="activeLang === 'az'"
+              show-character-count
+              :max-characters="160"
             />
           </div>
 
@@ -341,6 +375,15 @@ export default {
 
   methods: {
     ...mapMutations(['setActiveLang']),
+
+    onKeywordsChange (key, value) {
+      const keywords = value.replaceAll(' ', '').split(',')
+      this.$set(this, key, keywords.slice(0, 10).join(', '))
+    },
+
+    getKeywordsLength (keywords) {
+      return typeof keywords === 'string' ? (keywords.length ? keywords.replaceAll(' ', '').split(',').length : 0) : 0
+    },
 
     toggleShowPreviews () {
       this.showPreviews = !this.showPreviews
