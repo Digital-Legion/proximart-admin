@@ -3,11 +3,19 @@
     <span class="g-label" v-if="label">{{ label }}</span>
     <div class="custom-input__input-wrapper">
       <textarea-autosize v-if="isTextarea" :rows="1" :max-rows="5" class="custom-input__input custom-input__input--textarea"
-                         @input="onInput" :placeholder="placeholder" />
+                         @input="onInput" :placeholder="placeholder" :value="value" />
       <phone-mask-input v-else-if="isPhone" :value="value" @input="onInput" :placeholder="placeholder"
                         @onValidate="$emit('set-phone-valid', $event.isValidByLibPhoneNumberJs)" :show-flag="true"/>
-      <input v-else :type="filteredType" :readonly="readonly" class="custom-input__input" :class="{'custom-input__input--password': type === 'password'}" @input="onInput"
-             :placeholder="placeholder">
+      <input
+        v-else
+        :type="filteredType"
+        :readonly="readonly"
+        class="custom-input__input"
+        :class="{'custom-input__input--password': type === 'password'}"
+        :value="value"
+        @input="onInput"
+        :placeholder="placeholder"
+      >
       <svg class="custom-input__password-eye" @click="$emit('toggle-password')" v-if="type === 'password'" width="16" height="16" viewBox="0 0 16 16"
            fill="none" xmlns="http://www.w3.org/2000/svg">
         <path
