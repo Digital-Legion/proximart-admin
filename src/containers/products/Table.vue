@@ -34,6 +34,7 @@
           <div v-else class="g-table__cell">
             <custom-input
               v-model="newProductNameAz"
+              @input="onNameAzInput"
             />
           </div>
         </template>
@@ -47,6 +48,19 @@
             <custom-input
               v-model="newProductSlug"
               @input="onSlugInput"
+            />
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column
+        label="Slug AZ"
+      >
+        <template slot-scope="props">
+          <span v-if="!props.row.new">{{ props.row.slug__az }}</span>
+          <div v-else class="g-table__cell">
+            <custom-input
+              v-model="newProductSlugAz"
+              @input="onSlugAzInput"
             />
           </div>
         </template>
@@ -107,8 +121,10 @@ export default {
       newProductName: '',
       newProductNameAz: '',
       newProductSlug: '',
+      newProductSlugAz: '',
 
-      slugBasedOnName: true
+      slugBasedOnName: true,
+      slugBasedOnNameAz: true
     }
   },
 
@@ -128,6 +144,7 @@ export default {
       this.newProductName = ''
       this.newProductNameAz = ''
       this.newProductSlug = ''
+      this.newProductSlugAz = ''
     }
   },
 
@@ -142,7 +159,8 @@ export default {
           id: 'NEW',
           name: '',
           name__az: '',
-          slug: ''
+          slug: '',
+          slug__az: ''
         })
       return data
     },
@@ -194,7 +212,8 @@ export default {
         await this.createProduct({
           name: this.newProductName,
           name__az: this.newProductNameAz,
-          slug: this.newProductSlug
+          slug: this.newProductSlug,
+          slug__az: this.newProductSlugAz
         }).then(() => {
           this.$emit('set-creating-new', false)
           if (this.page !== 1)
@@ -212,6 +231,7 @@ export default {
       this.newProductName = ''
       this.newProductNameAz = ''
       this.newProductSlug = ''
+      this.newProductSlugAz = ''
     },
 
     onNameInput (name) {
@@ -220,8 +240,18 @@ export default {
       }
     },
 
+    onNameAzInput (name) {
+      if (this.slugBasedOnNameAz) {
+        this.newProductSlugAz = slugify(name).toLowerCase()
+      }
+    },
+
     onSlugInput () {
       this.slugBasedOnName = false
+    },
+
+    onSlugAzInput () {
+      this.slugBasedOnNameAz = false
     }
   }
 }
