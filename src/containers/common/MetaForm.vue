@@ -34,7 +34,7 @@
                 placeholder="Enter meta title"
                 v-if="activeLang === 'ru'"
                 show-character-count
-                :max-characters="60"
+                :max-characters="70"
               />
               <custom-input
                 class="mb-20"
@@ -43,7 +43,7 @@
                 placeholder="Enter meta title"
                 v-else-if="activeLang === 'az'"
                 show-character-count
-                :max-characters="60"
+                :max-characters="70"
               />
               <custom-input
                 class="mb-20"
