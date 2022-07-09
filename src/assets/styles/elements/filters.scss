@@ -1,0 +1,13 @@
+.the-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+
+  &__item {
+    &-name {
+      display: block;
+      margin-bottom: 4px;
+    }
+  }
+}

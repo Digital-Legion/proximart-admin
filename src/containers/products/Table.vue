@@ -109,6 +109,10 @@ export default {
     creatingNew: {
       type: Boolean,
       default: false
+    },
+    filters: {
+      type: Object,
+      default: () => {}
     }
   },
 
@@ -130,13 +134,20 @@ export default {
 
   async created () {
     this.loading = true
-    await this.fetchProducts(this.page)
+    await this.fetchProducts({ page: this.page, filters: this.filters })
     this.loading = false
   },
 
   watch: {
     page () {
       this.debounceFetch()
+    },
+
+    filters: {
+      deep: true,
+      handler () {
+        this.page = 1
+      }
     },
 
     creatingNew () {
@@ -175,7 +186,7 @@ export default {
 
     debounceFetch: debounce(async function () {
       this.loading = true
-      await this.fetchProducts(this.page)
+      await this.fetchProducts({ page: this.page, filters: this.filters })
       this.loading = false
     }, 200),
 
@@ -218,7 +229,7 @@ export default {
           this.$emit('set-creating-new', false)
           if (this.page !== 1)
             this.page = 1
-          else this.fetchProducts(this.page)
+          else this.fetchProducts({ page: this.page, filters: this.filters })
         }).catch(e => {
           this.$toasted.error(e.response.data.error || e.response.data.message)
         })

@@ -1,4 +1,5 @@
 import axios from 'axios'
+import querify from '@/utils/querify'
 
 export default {
   namespaced: true,
@@ -8,6 +9,7 @@ export default {
     allBrands: [],
     allColors: [],
     allDevices: [],
+    allCategories: [],
     limit: 10
   },
 
@@ -41,12 +43,18 @@ export default {
 
     setAllDevices (state, payload) {
       state.allDevices = payload
+    },
+
+    setAllCategories (state, payload) {
+      state.allCategories = payload
     }
   },
 
   actions: {
-    fetchProducts ({ commit, state }, page) {
-      axios.get(`/product?page=${page}&limit=${state.limit}`)
+    fetchProducts ({ commit, state }, { page, filters }) {
+      axios.get(`/product?page=${page}&limit=${state.limit}${
+        filters && Object.values(filters).filter(f => f).length > 0 ? `&${querify(filters)}` : ''
+      }`)
         .then(res => {
           commit('setProducts', res.data)
         })
@@ -155,6 +163,16 @@ export default {
       axios.get('/color?page=1&limit=99999')
         .then(res => {
           commit('setAllColors', res.data?.items ?? [])
+        })
+        .catch(e => {
+          console.error(e)
+        })
+    },
+
+    fetchAllCategories ({ commit }) {
+      axios.get('/category?page=1&limit=99999')
+        .then(res => {
+          commit('setAllCategories', res.data?.items ?? [])
         })
         .catch(e => {
           console.error(e)
