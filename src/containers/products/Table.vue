@@ -146,7 +146,11 @@ export default {
     filters: {
       deep: true,
       handler () {
-        this.page = 1
+        if (this.page !== 1) {
+          this.page = 1
+        } else {
+          this.debounceFetch()
+        }
       }
     },
 
