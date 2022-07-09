@@ -68,6 +68,12 @@
                 <span>Leads</span>
               </router-link>
             </li>
+            <li>
+              <router-link to="/static" class="g-sidebar__nav-item" :class="{'router-link-exact-active': $route.path.startsWith('/static')}">
+                <font-awesome-icon icon="folder-plus" class="g-sidebar__nav-icon" />
+                <span>Static</span>
+              </router-link>
+            </li>
           </ul>
         </nav>
         <div class="g-sidebar__toggler" @click="toggleMenu" v-if="isMobile()">

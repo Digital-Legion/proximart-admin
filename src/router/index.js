@@ -193,6 +193,14 @@ const routes = [
     meta: {
       layout: 'auth-layout'
     }
+  },
+  {
+    path: '/static',
+    name: 'static',
+    component: () => import('@/pages/static/index.vue'),
+    meta: {
+      layout: 'auth-layout'
+    }
   }
 ]
 

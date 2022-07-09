@@ -20,6 +20,7 @@
     "slugify": "^1.4.6",
     "style-resources-loader": "^1.4.1",
     "vue": "^2.6.11",
+    "vue-json-pretty": "^1.8.3",
     "vue-loading-overlay": "^3.4.2",
     "vue-phone-mask-input": "^1.1.11",
     "vue-router": "^3.2.0",
