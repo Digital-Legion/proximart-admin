@@ -194,6 +194,38 @@ const routes = [
       layout: 'auth-layout'
     }
   },
+
+  {
+    path: '/metas',
+    component: () => import('@/pages/meta/index.vue'),
+    children: [
+      {
+        path: '',
+        name: 'meta',
+        component: () => import('@/pages/meta/all.vue'),
+        meta: {
+          layout: 'auth-layout'
+        }
+      },
+      {
+        path: 'add',
+        name: 'meta-add',
+        component: () => import('@/pages/meta/add-edit.vue'),
+        meta: {
+          layout: 'auth-layout'
+        }
+      },
+      {
+        path: ':id',
+        name: 'meta-edit',
+        props: true,
+        component: () => import('@/pages/meta/add-edit.vue'),
+        meta: {
+          layout: 'auth-layout'
+        }
+      }
+    ]
+  },
   {
     path: '/static',
     name: 'static',
