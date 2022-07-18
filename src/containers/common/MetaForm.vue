@@ -66,6 +66,22 @@
                 :max-characters="160"
               />
               <custom-input
+                v-model="description"
+                placeholder="Enter description"
+                :is-textarea="true"
+                class="mb-20"
+                label="Description"
+                v-if="activeLang === 'ru'"
+              />
+              <custom-input
+                v-model="descriptionAz"
+                placeholder="Enter description"
+                :is-textarea="true"
+                class="mb-20"
+                label="Description"
+                v-if="activeLang === 'az'"
+              />
+              <custom-input
                 class="mb-20"
                 :value="metaKeywords"
                 @input="onKeywordsChange('metaKeywords', $event)"
@@ -285,6 +301,8 @@ export default {
       metaTitleAz: '',
       metaDescription: '',
       metaDescriptionAz: '',
+      description: '',
+      descriptionAz: '',
       metaKeywords: '',
       metaKeywordsAz: '',
       metaImageUrl: '',
@@ -314,6 +332,8 @@ export default {
       vm.metaTitleAz,
       vm.metaDescription,
       vm.metaDescriptionAz,
+      vm.description,
+      vm.descriptionAz,
       vm.metaKeywords,
       vm.metaKeywordsAz,
       vm.metaImageFile,
@@ -395,6 +415,8 @@ export default {
         this.metaTitleAz = this.initialData.meta_title__az ?? ''
         this.metaDescription = this.initialData.meta_description ?? ''
         this.metaDescriptionAz = this.initialData.meta_description__az ?? ''
+        this.description = this.initialData.description ?? ''
+        this.descriptionAz = this.initialData.description__az ?? ''
         this.metaKeywords = this.initialData.meta_keywords ?? ''
         this.metaKeywordsAz = this.initialData.meta_keywords__az ?? ''
         this.metaImageUrl = this.initialData.meta_image?.url ?? ''
@@ -419,6 +441,8 @@ export default {
         meta_title__az: this.metaTitleAz,
         meta_description: this.metaDescription,
         meta_description__az: this.metaDescriptionAz,
+        description: this.description,
+        description__az: this.descriptionAz,
         meta_keywords: this.metaKeywords,
         meta_keywords__az: this.metaKeywordsAz,
         facebook_title: this.facebookTitle,
