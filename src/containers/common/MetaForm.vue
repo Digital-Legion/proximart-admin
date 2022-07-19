@@ -71,7 +71,7 @@
                 :is-textarea="true"
                 class="mb-20"
                 label="Description"
-                v-if="activeLang === 'ru'"
+                v-if="isMetaEditPage && activeLang === 'ru'"
               />
               <custom-input
                 v-model="descriptionAz"
@@ -79,7 +79,7 @@
                 :is-textarea="true"
                 class="mb-20"
                 label="Description"
-                v-if="activeLang === 'az'"
+                v-if="isMetaEditPage && activeLang === 'az'"
               />
               <custom-input
                 class="mb-20"
@@ -368,6 +368,10 @@ export default {
   computed: {
     ...mapState(['activeLang', 'langs']),
 
+    isMetaEditPage () {
+      return this.$route.name === 'meta-edit'
+    },
+
     titleMeta () {
       return this.activeLang === 'ru' ? (this.metaTitle ? this.metaTitle : 'Google Meta — PROXIMART') : this.activeLang === 'az' ? (this.metaTitleAz ? this.metaTitleAz : 'Google Meta — PROXIMART') : 'Google Meta — PROXIMART'
     },
@@ -441,8 +445,6 @@ export default {
         meta_title__az: this.metaTitleAz,
         meta_description: this.metaDescription,
         meta_description__az: this.metaDescriptionAz,
-        description: this.description,
-        description__az: this.descriptionAz,
         meta_keywords: this.metaKeywords,
         meta_keywords__az: this.metaKeywordsAz,
         facebook_title: this.facebookTitle,
@@ -455,7 +457,11 @@ export default {
         twitter_description__az: this.twitterDescriptionAz,
         meta_image: this.metaImageFile || this.metaImageUrl,
         facebook_image: this.facebookImageFile || this.facebookImageUrl,
-        twitter_image: this.twitterImageFile || this.twitterImageUrl
+        twitter_image: this.twitterImageFile || this.twitterImageUrl,
+        ...(this.isMetaEditPage ? {
+          description: this.description,
+          description__az: this.descriptionAz
+        } : {})
       }
 
       this.$emit('submit', data)

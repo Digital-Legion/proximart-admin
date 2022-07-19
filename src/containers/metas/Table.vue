@@ -29,14 +29,6 @@
       <el-table-column label="Actions">
         <template slot-scope="props">
           <div class="g-table__actions">
-            <router-link :to="{
-                name: 'metas',
-                query: {
-                  id: props.row.id
-                }
-              }" class="g-button g-table__actions-item">
-              <font-awesome-icon icon="sitemap" />
-            </router-link>
             <a :href="`/metas/${props.row.id}`" target="_blank" class="g-button g-button--edit g-table__actions-item">
               <font-awesome-icon icon="edit" />
             </a>
