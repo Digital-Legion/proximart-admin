@@ -65,21 +65,19 @@
                 show-character-count
                 :max-characters="160"
               />
-              <custom-input
+              <editor
                 v-model="description"
                 placeholder="Enter description"
-                :is-textarea="true"
                 class="mb-20"
                 label="Description"
-                v-if="isMetaEditPage && activeLang === 'ru'"
+                v-show="isMetaEditPage && activeLang === 'ru'"
               />
-              <custom-input
+              <editor
                 v-model="descriptionAz"
                 placeholder="Enter description"
-                :is-textarea="true"
                 class="mb-20"
                 label="Description"
-                v-if="isMetaEditPage && activeLang === 'az'"
+                v-show="isMetaEditPage && activeLang === 'az'"
               />
               <custom-input
                 class="mb-20"
@@ -255,11 +253,13 @@
 
 <script>
 import { mapMutations, mapState } from 'vuex'
+import Editor from '@/components/Editor'
 
 export default {
   name: 'MetaForm',
 
   components: {
+    Editor,
     PageTabs: () => import('@/components/PageTabs'),
     PageBox: () => import('@/components/PageBox'),
     PageHeader: () => import('@/components/PageHeader'),

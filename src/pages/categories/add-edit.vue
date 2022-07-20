@@ -36,23 +36,21 @@
           label="Name"
           v-else-if="activeLang === 'az'"
         />
-        <custom-input
+        <editor
           v-model="description"
           @input="onDescriptionInput"
           placeholder="Enter description"
-          :is-textarea="true"
           class="mb-20"
           label="Description"
-          v-if="activeLang === 'ru'"
+          v-show="activeLang === 'ru'"
         />
-        <custom-input
+        <editor
           v-model="descriptionAz"
           @input="onDescriptionInput"
           placeholder="Enter description"
-          :is-textarea="true"
           class="mb-20"
           label="Description"
-          v-else-if="activeLang === 'az'"
+          v-show="activeLang === 'az'"
         />
         <custom-input
           v-model="slug"
@@ -112,12 +110,14 @@
 import { mapState, mapMutations, mapActions } from 'vuex'
 import DropImage from '@/components/DropImage'
 import { debounce } from '@/utils/debounce'
+import Editor from '@/components/Editor'
 const slugify = require('slugify')
 
 export default {
   name: 'CategoriesAddEdit',
 
   components: {
+    Editor,
     DropImage,
     MetaForm: () => import('@/containers/common/MetaForm'),
     PageHeader: () => import('@/components/PageHeader'),

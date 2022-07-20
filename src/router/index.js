@@ -227,6 +227,51 @@ const routes = [
     ]
   },
   {
+    path: '/pages',
+    component: () => import('@/pages/page/index.vue'),
+    children: [
+      {
+        path: '',
+        name: 'page',
+        component: () => import('@/pages/page/all.vue'),
+        meta: {
+          layout: 'auth-layout'
+        }
+      },
+      {
+        path: 'add',
+        name: 'page-add',
+        component: () => import('@/pages/page/add-edit.vue'),
+        meta: {
+          layout: 'auth-layout'
+        }
+      },
+      {
+        path: ':id',
+        name: 'page-edit',
+        props: true,
+        component: () => import('@/pages/page/add-edit.vue'),
+        meta: {
+          layout: 'auth-layout'
+        }
+      }
+    ]
+  },
+  {
+    path: '/settings',
+    component: () => import('@/pages/page/index.vue'),
+    children: [
+      {
+        path: '',
+        name: 'settings-edit',
+        component: () => import('@/pages/settings/add-edit.vue'),
+        meta: {
+          layout: 'auth-layout'
+        }
+      }
+    ]
+  },
+  {
     path: '/static',
     name: 'static',
     component: () => import('@/pages/static/index.vue'),

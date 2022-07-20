@@ -80,6 +80,18 @@
                 <span>Meta</span>
               </router-link>
             </li>
+            <li>
+              <router-link to="/pages" class="g-sidebar__nav-item" :class="{'router-link-exact-active': $route.path.startsWith('/pages')}">
+                <font-awesome-icon icon="file-word" class="g-sidebar__nav-icon"></font-awesome-icon>
+                <span>Pages</span>
+              </router-link>
+            </li>
+            <li>
+              <router-link to="/settings" class="g-sidebar__nav-item" :class="{'router-link-exact-active': $route.path.startsWith('/settings')}">
+                <font-awesome-icon icon="cogs" class="g-sidebar__nav-icon"></font-awesome-icon>
+                <span>Settings</span>
+              </router-link>
+            </li>
           </ul>
         </nav>
         <div class="g-sidebar__toggler" @click="toggleMenu" v-if="isMobile()">
