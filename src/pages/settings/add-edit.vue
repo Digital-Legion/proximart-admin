@@ -107,9 +107,9 @@
         <DropImage
           label="Meta Image"
           placeholder="Select image"
-          :img-src="meta_image.url"
-          @set-image-src="meta_image.url = $event"
-          @set-image="metaImageFile = $event; meta_image.url = ''"
+          :img-src="meta_image"
+          @set-image-src="meta_image = $event"
+          @set-image="metaImageFile = $event; meta_image = ''"
           class="mb-20"
         />
         <custom-input
@@ -190,7 +190,7 @@ export default {
       google_analytics: '',
       google_tag: '',
       instagram: '',
-      meta_image: { url: '' },
+      meta_image: '',
       phone: '',
       telegram: '',
       yandex_metrika: '',
@@ -217,7 +217,7 @@ export default {
         this.google_analytics = data.google_analytics || ''
         this.google_tag = data.google_tag || ''
         this.instagram = data.instagram || ''
-        this.meta_image = data.meta_image || { url: '' }
+        this.meta_image = data.meta_image?.url || data.meta_image || ''
         this.phone = data.phone || ''
         this.telegram = data.telegram || ''
         this.yandex_metrika = data.yandex_metrika || ''
@@ -293,7 +293,7 @@ export default {
         formData.append('google_analytics', this.google_analytics)
         formData.append('google_tag', this.google_tag)
         formData.append('instagram', this.instagram)
-        formData.append('meta_image', this.metaImageFile || this.meta_image || { url: '' })
+        formData.append('meta_image', this.metaImageFile || this.meta_image.url || this.meta_image || '')
         formData.append('phone', this.phone)
         formData.append('telegram', this.telegram)
         formData.append('yandex_metrika', this.yandex_metrika)
