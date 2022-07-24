@@ -31,6 +31,18 @@
           label="Address Link"
         />
         <custom-input
+          v-model="address.title__az"
+          placeholder="Enter address AZ"
+          class="mb-20"
+          label="Address AZ"
+        />
+        <custom-input
+          v-model="address.url__az"
+          placeholder="Enter address link AZ"
+          class="mb-20"
+          label="Address Link AZ"
+        />
+        <custom-input
           v-model="email"
           placeholder="Enter email"
           class="mb-20"
@@ -167,7 +179,9 @@ export default {
     return {
       address: {
         title: '',
-        url: ''
+        url: '',
+        title__az: '',
+        url__az: ''
       },
       email: '',
       facebook: '',
