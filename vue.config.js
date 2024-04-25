@@ -16,7 +16,7 @@ module.exports = {
       ]
     }
   },
-  outputDir: path.resolve(__dirname, './build'),
+  outputDir: path.resolve(__dirname, './proximart-admin'),
   css: {
     sourceMap: process.env.NODE_ENV !== 'production'
   }
