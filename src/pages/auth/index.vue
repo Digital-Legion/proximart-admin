@@ -60,7 +60,7 @@ export default {
           password: this.password
         })
           .then(async res => {
-            localStorage.setItem('token', res.data.access_token)
+            localStorage.setItem('token', 'MOCK')
             await this.getProfile()
             this.$router.push('/').catch(() => {
             })
