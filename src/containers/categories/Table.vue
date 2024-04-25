@@ -20,7 +20,7 @@
       />
       <el-table-column
         label="Name AZ"
-        prop="name__az"
+        prop="nameAz"
       />
       <el-table-column label="Actions">
         <template slot-scope="props">
@@ -33,12 +33,12 @@
               }" class="g-button g-table__actions-item">
               <font-awesome-icon icon="sitemap" />
             </router-link>
-            <a :href="`/categories/${props.row.id}`" target="_blank" class="g-button g-button--edit g-table__actions-item">
+            <router-link :to="`/categories/${props.row.id}`" class="g-button g-button--edit g-table__actions-item">
               <font-awesome-icon icon="edit" />
-            </a>
-            <a :href="`/parameters/${props.row.id}`" target="_blank" class="g-button g-table__actions-item">
+            </router-link>
+            <router-link :to="`/parameters/${props.row.id}`" class="g-button g-table__actions-item">
               <font-awesome-icon icon="cubes" />
-            </a>
+            </router-link>
             <button class="g-button g-button--danger g-table__actions-item" @click="onRemove(props.row.id)">
               <font-awesome-icon icon="trash" />
             </button>

@@ -77,9 +77,9 @@
               </button>
             </template>
             <template v-else>
-              <a :href="`/products/${props.row.id}`" target="_blank" class="g-button g-button--edit g-table__actions-item">
+              <router-link :to="`/products/${props.row.id}`" class="g-button g-button--edit g-table__actions-item">
                 <font-awesome-icon icon="edit" />
-              </a>
+              </router-link>
               <button class="g-button g-button--danger g-table__actions-item" @click="onRemove(props.row.id)">
                 <font-awesome-icon icon="trash" />
               </button>

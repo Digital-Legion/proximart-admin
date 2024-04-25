@@ -360,11 +360,11 @@ export default {
       await this.fetchProduct(this.productId)
         .then(({ data }) => {
           this.name = data.name ?? ''
-          this.nameAz = data.name__az ?? ''
+          this.nameAz = data.name__az ?? data.nameAz ?? ''
           this.description = data.description ?? ''
-          this.descriptionAz = data.description__az ?? ''
+          this.descriptionAz = data.description__az ?? data.descriptionAz ?? ''
           this.slug = data.slug ?? ''
-          this.slugAz = data.slug__az ?? ''
+          this.slugAz = data.slug__az ?? data.slugAz ?? ''
           this.price = data.price
           this.stock = data.stock
           this.discount = data.discount
@@ -773,30 +773,6 @@ export default {
     },
 
     async getParameters () {
-      return new Promise((resolve) => {
-        if (this.category) {
-          this.fetchAllParameters(this.productId)
-            .then(res => {
-              this.$set(this, 'parameters', {
-                ...this.parameters,
-                items: res.data.map(i => ({
-                  ...i,
-                  value: i.value?.[0]?.value || '',
-                  value__az: i.value?.[0]?.value__az || '',
-                  relationId: i.value?.[0]?.id || null
-                }))
-              })
-              resolve(res)
-            })
-            .catch(e => {
-              console.error(e.response.data.message)
-              this.$toasted.error('An error occured while fetching parameters')
-              resolve(e)
-            })
-        } else {
-          resolve(false)
-        }
-      })
     },
 
     async onParametersSubmit (data) {

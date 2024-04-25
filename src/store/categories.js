@@ -1,5 +1,3 @@
-import axios from 'axios'
-
 export default {
   namespaced: true,
 
@@ -16,127 +14,93 @@ export default {
       state.categories.items.pop()
     },
 
-    addToCategories (state, payload) {
-      state.categories.meta = payload.meta
-      state.categories.items = [...state.categories.items, ...payload.items]
-    },
-
-    setCascaderCategories (state, payload) {
-      state.cascaderCategories = payload
-    },
-
     removeCategoryById (state, id) {
-      const categoryIndex = state.categories.items.findIndex(c => c.id === id)
+      const categoryIndex = state.categories.items[0].children.findIndex(c => c.id === id)
       if (categoryIndex !== -1) {
-        state.categories.items.splice(categoryIndex, 1)
-        state.categories.meta.totalItems--
+        state.categories.items[0].children.splice(categoryIndex, 1)
       }
     }
   },
 
   actions: {
     fetchCategories ({ commit, state }, { page, parentId }) {
-      if (typeof parentId !== 'string') {
-        axios.get(`/category?page=${page}&limit=${state.limit}`)
-          .then(res => {
-            commit('setCategories', res.data)
-          })
-          .catch(e => {
-            console.error(e)
-          })
-      } else {
-        axios.get(`/category/children/${parentId}?page=${page}&limit=${state.limit}`)
-          .then(res => {
-            if (page === 1) {
-              commit('setCategories', res.data)
-            } else {
-              commit('addToCategories', res.data)
-            }
-          })
-          .catch(e => {
-            console.error(e)
-          })
-      }
     },
 
     fetchCascaderCategories ({ commit }) {
-      axios.get('/category/cascader')
-        .then(res => {
-          commit('setCascaderCategories', res.data)
-        })
-        .catch(e => {
-          console.error(e)
-        })
     },
 
-    fetchCategory (_, id) {
-      return new Promise((resolve, reject) => {
-        axios.get(`/category/${id}`)
-          .then(res => {
-            resolve(res)
-          })
-          .catch(e => {
-            reject(e)
-          })
+    fetchCategory ({ state }, id) {
+      return { data: state.categories?.items?.[0]?.children?.find(cat => cat.id === id) }
+    },
+
+    createCategory ({ state, commit }, data) {
+      if (!state.categories?.items?.[0]?.children) {
+        commit('setCategories', {
+          items: [
+            {
+              children: []
+            }
+          ]
+        })
+      }
+
+      commit('setCategories', {
+        items: [
+          {
+            children: [
+              ...state.categories.items[0].children,
+              {
+                id: String(Date.now()),
+                name: data.name,
+                nameAz: data.name__az,
+                description: data.description,
+                descriptionAz: data.description__az,
+                slug: data.slug,
+                slugAz: data.slug__az,
+                parent: data.parent,
+                meta: data.meta,
+                image: {
+                  alt: data.alt,
+                  url: data.file ? URL.createObjectURL(data.file) : null
+                }
+              }
+            ]
+          }
+        ]
       })
     },
 
-    createCategory (_, data) {
-      return new Promise((resolve, reject) => {
-        const formData = new FormData()
-        Object.entries(data).filter(v => v[0] !== 'id').forEach(entry => {
-          formData.append(entry[0], entry[1])
-        })
-
-        axios.post('/category', formData)
-          .then(res => {
-            resolve(res)
-          })
-          .catch(e => {
-            reject(e)
-          })
+    updateCategory ({ state, commit }, data) {
+      const newCats = state.categories.items[0].children.slice()
+      newCats.splice(newCats.findIndex(cat => cat.id === data.id), 1, {
+        id: data.id,
+        name: data.name,
+        nameAz: data.name__az,
+        description: data.description,
+        descriptionAz: data.description__az,
+        slug: data.slug,
+        slugAz: data.slug__az,
+        parent: data.parent,
+        meta: data.meta,
+        image: {
+          alt: data.alt,
+          url: data.file ? URL.createObjectURL(data.file) : null
+        }
       })
-    },
-
-    updateCategory (_, data) {
-      return new Promise((resolve, reject) => {
-        const formData = new FormData()
-        Object.entries(data).filter(v => v[0] !== 'id').forEach(entry => {
-          formData.append(entry[0], entry[1])
-        })
-
-        axios.put(`/category/${data.id}`, formData)
-          .then(res => {
-            resolve(res)
-          })
-          .catch(e => {
-            reject(e)
-          })
+      commit('setCategories', {
+        items: [
+          {
+            children: newCats
+          }
+        ]
       })
     },
 
     removeCategory ({ commit }, id) {
-      return new Promise((resolve, reject) => {
-        axios.delete(`/category/${id}`)
-          .then(() => {
-            commit('removeCategoryById', id)
-            resolve()
-          })
-          .catch(e => {
-            reject(e)
-          })
-      })
+      commit('removeCategoryById', id)
     },
 
     async saveMeta (_, data) {
-      const formData = new FormData()
-      Object.entries(data.meta).forEach(entry => {
-        formData.append(entry[0], entry[1])
-      })
-
-      if (data.metaId)
-        return await axios.put(`/category/meta/${data.metaId}`, formData)
-      return await axios.post('/category/meta', formData)
     }
   }
 }

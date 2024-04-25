@@ -14,7 +14,7 @@
         </button>
 
         <p class="categories-page__json-text">Click on [id, name, name__az, slug] to change the current category to the clicked one</p>
-        <vue-json-pretty :data="cascaderCategories" class="categories-page__json" @click="onClickJson" />
+        <vue-json-pretty v-if="cascaderCategories" :data="cascaderCategories" class="categories-page__json" @click="onClickJson" />
       </el-popover>
     </page-header>
     <page-box>

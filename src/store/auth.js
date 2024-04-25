@@ -1,4 +1,3 @@
-import axios from 'axios'
 import router from '@/router'
 
 export default {
@@ -29,25 +28,13 @@ export default {
       return new Promise((resolve, reject) => {
         localStorage.setItem('token', 'default')
         resolve(true)
-        // axios.post('/auth/login', data)
-        //   .then(res => {
-        //     resolve(res)
-        //   })
-        //   .catch(e => {
-        //     console.error(e)
-        //     reject(e)
-        //   })
       })
     },
 
     getProfile ({ commit }) {
-      axios.get('/auth/profile')
-        .then(res => {
-          commit('setProfile', res.data)
-        })
-        .catch(e => {
-          console.error(e)
-        })
+      commit('setProfile', {
+        name: 'Mocky'
+      })
     }
   }
 }

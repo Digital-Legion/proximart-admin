@@ -51,9 +51,9 @@ export default {
   },
 
   async created () {
-    await this.fetchAllBrands()
-    await this.fetchAllColors()
-    await this.fetchAllCategories()
+    // await this.fetchAllBrands()
+    // await this.fetchAllColors()
+    // await this.fetchAllCategories()
     this.loading = false
   },
 

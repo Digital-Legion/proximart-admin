@@ -1,5 +1,4 @@
 import axios from 'axios'
-import querify from '@/utils/querify'
 
 export default {
   namespaced: true,
@@ -21,15 +20,19 @@ export default {
     },
 
     addToProducts (state, payload) {
+      if (!state.products) {
+        state.products = {
+          items: []
+        }
+      }
+
       state.products.items.unshift(payload)
-      state.products.meta.totalItems++
     },
 
     removeProductById (state, id) {
       const brandIndex = state.products.items.findIndex(c => c.id === id)
       if (brandIndex !== -1) {
         state.products.items.splice(brandIndex, 1)
-        state.products.meta.totalItems--
       }
     },
 
@@ -52,39 +55,17 @@ export default {
 
   actions: {
     fetchProducts ({ commit, state }, { page, filters }) {
-      axios.get(`/product?page=${page}&limit=${state.limit}${
-        filters && Object.values(filters).filter(f => f).length > 0 ? `&${querify(filters)}` : ''
-      }`)
-        .then(res => {
-          commit('setProducts', res.data)
-        })
-        .catch(e => {
-          console.error(e)
-        })
+      return state.products
     },
 
-    fetchProduct (_, id) {
-      return new Promise((resolve, reject) => {
-        axios.get(`/product/${id}`)
-          .then(res => {
-            resolve(res)
-          })
-          .catch(e => {
-            reject(e)
-          })
-      })
+    fetchProduct ({ state }, id) {
+      return { data: state.products.items.find(p => p.id === id) }
     },
 
-    createProduct (_, data) {
-      return new Promise((resolve, reject) => {
-        axios.post('/product', data)
-          .then(res => {
-            resolve(res)
-            console.log('yes')
-          })
-          .catch(e => {
-            reject(e)
-          })
+    async createProduct ({ commit }, data) {
+      commit('addToProducts', {
+        ...data,
+        id: String(Date.now())
       })
     },
 
@@ -136,47 +117,17 @@ export default {
       })
     },
 
-    removeProduct ({ commit }, id) {
-      return new Promise((resolve, reject) => {
-        axios.delete(`/product/${id}`)
-          .then(() => {
-            commit('removeProductById', id)
-            resolve()
-          })
-          .catch(e => {
-            reject(e)
-          })
-      })
+    async removeProduct ({ commit }, id) {
+      commit('removeProductById', id)
     },
 
-    fetchAllBrands ({ commit }) {
-      axios.get('/brand?page=1&limit=99999')
-        .then(res => {
-          commit('setAllBrands', res.data?.items ?? [])
-        })
-        .catch(e => {
-          console.error(e)
-        })
+    async fetchAllBrands ({ commit }) {
     },
 
-    fetchAllColors ({ commit }) {
-      axios.get('/color?page=1&limit=99999')
-        .then(res => {
-          commit('setAllColors', res.data?.items ?? [])
-        })
-        .catch(e => {
-          console.error(e)
-        })
+    async fetchAllColors ({ commit }) {
     },
 
-    fetchAllCategories ({ commit }) {
-      axios.get('/category?page=1&limit=99999')
-        .then(res => {
-          commit('setAllCategories', res.data?.items ?? [])
-        })
-        .catch(e => {
-          console.error(e)
-        })
+    async fetchAllCategories ({ commit }) {
     },
 
     async saveMeta (_, data) {
@@ -215,13 +166,6 @@ export default {
     },
 
     async fetchAllDevices ({ commit }) {
-      axios.get('/device?page=1&limit=99999')
-        .then(res => {
-          commit('setAllDevices', res.data?.items ?? [])
-        })
-        .catch(e => {
-          console.error(e)
-        })
     }
   }
 }

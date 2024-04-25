@@ -174,12 +174,12 @@ export default {
       await this.fetchCategory(this.categoryId)
         .then(({ data }) => {
           this.name = data.name ?? ''
-          this.nameAz = data.name__az ?? ''
+          this.nameAz = data.name__az ?? data.nameAz ?? ''
           this.description = data.description ?? ''
-          this.descriptionAz = data.description__az ?? ''
+          this.descriptionAz = data.description__az ?? data.descriptionAz ?? ''
           this.alt = data.image?.alt ?? ''
           this.slug = data.slug ?? ''
-          this.slugAz = data.slug__az ?? ''
+          this.slugAz = data.slug__az ?? data.slugAz ?? ''
           this.image = data.image?.url ?? ''
           this.parent = data.parent
           this.meta = data.meta
