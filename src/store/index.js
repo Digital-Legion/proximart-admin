@@ -11,6 +11,9 @@ import parameters from '@/store/parameters'
 import orders from '@/store/orders'
 import auth from '@/store/auth'
 import leads from '@/store/leads'
+import meta from '@/store/meta'
+import page from '@/store/page'
+import settings from '@/store/settings'
 
 Vue.use(Vuex)
 
@@ -25,6 +28,9 @@ export default new Vuex.Store({
     products,
     parameters,
     leads,
+    meta,
+    page,
+    settings,
     auth
   },
 

@@ -111,7 +111,7 @@ export default {
     },
 
     setInitialData () {
-      if (this.initialData && this.initialData.length && !this.initialDataSet) {
+      if (this.initialData && this.initialData.length) {
         const data = {}
         this.initialData.forEach(p => {
           data[p.id.toString()] = {

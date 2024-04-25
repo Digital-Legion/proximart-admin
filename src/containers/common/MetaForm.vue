@@ -33,6 +33,8 @@
                 label="Meta title"
                 placeholder="Enter meta title"
                 v-if="activeLang === 'ru'"
+                show-character-count
+                :max-characters="70"
               />
               <custom-input
                 class="mb-20"
@@ -40,6 +42,8 @@
                 label="Meta title"
                 placeholder="Enter meta title"
                 v-else-if="activeLang === 'az'"
+                show-character-count
+                :max-characters="70"
               />
               <custom-input
                 class="mb-20"
@@ -48,6 +52,8 @@
                 label="Meta description"
                 placeholder="Enter meta description"
                 v-if="activeLang === 'ru'"
+                show-character-count
+                :max-characters="160"
               />
               <custom-input
                 class="mb-20"
@@ -56,20 +62,46 @@
                 label="Meta description"
                 placeholder="Enter meta description"
                 v-else-if="activeLang === 'az'"
+                show-character-count
+                :max-characters="160"
+              />
+              <editor
+                v-model="description"
+                placeholder="Enter description"
+                class="mb-20"
+                label="Description"
+                v-show="isMetaEditPage && activeLang === 'ru'"
+              />
+              <editor
+                v-model="descriptionAz"
+                placeholder="Enter description"
+                class="mb-20"
+                label="Description"
+                v-show="isMetaEditPage && activeLang === 'az'"
               />
               <custom-input
                 class="mb-20"
-                v-model="metaKeywords"
+                :value="metaKeywords"
+                @input="onKeywordsChange('metaKeywords', $event)"
                 label="Meta keywords"
                 placeholder="Enter meta keywords (separate them by comma)"
                 v-if="activeLang === 'ru'"
+                show-character-count
+                :current-length="getKeywordsLength(metaKeywords)"
+                max-characters-prop="10 keywords"
+                enforce-value
               />
               <custom-input
                 class="mb-20"
-                v-model="metaKeywordsAz"
+                :value="metaKeywordsAz"
+                @input="onKeywordsChange('metaKeywordsAz', $event)"
                 label="Meta keywords"
                 placeholder="Enter meta keywords (separate them by comma)"
                 v-else-if="activeLang === 'az'"
+                show-character-count
+                :current-length="getKeywordsLength(metaKeywordsAz)"
+                max-characters-prop="10 keywords"
+                enforce-value
               />
             </div>
           </template>
@@ -81,6 +113,8 @@
               label="Facebook title"
               placeholder="Enter facebook title"
               v-if="activeLang === 'ru'"
+              show-character-count
+              :max-characters="60"
             />
             <custom-input
               class="mb-20"
@@ -88,6 +122,8 @@
               label="Facebook title"
               placeholder="Enter facebook title"
               v-else-if="activeLang === 'az'"
+              show-character-count
+              :max-characters="60"
             />
             <custom-input
               v-model="facebookDescription"
@@ -95,6 +131,8 @@
               label="Facebook description"
               placeholder="Enter facebook description"
               v-if="activeLang === 'ru'"
+              show-character-count
+              :max-characters="160"
             />
             <custom-input
               v-model="facebookDescriptionAz"
@@ -102,6 +140,8 @@
               label="Facebook description"
               placeholder="Enter facebook description"
               v-else-if="activeLang === 'az'"
+              show-character-count
+              :max-characters="160"
             />
           </div>
           <div class="add-edit-page__right">
@@ -111,6 +151,8 @@
               label="Twitter title"
               placeholder="Enter twitter title"
               v-if="activeLang === 'ru'"
+              show-character-count
+              :max-characters="60"
             />
             <custom-input
               class="mb-20"
@@ -118,6 +160,8 @@
               label="Twitter title"
               placeholder="Enter twitter title"
               v-else-if="activeLang === 'az'"
+              show-character-count
+              :max-characters="60"
             />
             <custom-input
               v-model="twitterDescription"
@@ -125,6 +169,8 @@
               label="Twitter description"
               placeholder="Enter twitter description"
               v-if="activeLang === 'ru'"
+              show-character-count
+              :max-characters="160"
             />
             <custom-input
               v-model="twitterDescriptionAz"
@@ -132,6 +178,8 @@
               label="Twitter description"
               placeholder="Enter twitter description"
               v-else-if="activeLang === 'az'"
+              show-character-count
+              :max-characters="160"
             />
           </div>
 
@@ -205,11 +253,13 @@
 
 <script>
 import { mapMutations, mapState } from 'vuex'
+import Editor from '@/components/Editor'
 
 export default {
   name: 'MetaForm',
 
   components: {
+    Editor,
     PageTabs: () => import('@/components/PageTabs'),
     PageBox: () => import('@/components/PageBox'),
     PageHeader: () => import('@/components/PageHeader'),
@@ -251,6 +301,8 @@ export default {
       metaTitleAz: '',
       metaDescription: '',
       metaDescriptionAz: '',
+      description: '',
+      descriptionAz: '',
       metaKeywords: '',
       metaKeywordsAz: '',
       metaImageUrl: '',
@@ -280,6 +332,8 @@ export default {
       vm.metaTitleAz,
       vm.metaDescription,
       vm.metaDescriptionAz,
+      vm.description,
+      vm.descriptionAz,
       vm.metaKeywords,
       vm.metaKeywordsAz,
       vm.metaImageFile,
@@ -314,6 +368,10 @@ export default {
   computed: {
     ...mapState(['activeLang', 'langs']),
 
+    isMetaEditPage () {
+      return this.$route.name === 'meta-edit'
+    },
+
     titleMeta () {
       return this.activeLang === 'ru' ? (this.metaTitle ? this.metaTitle : 'Google Meta — PROXIMART') : this.activeLang === 'az' ? (this.metaTitleAz ? this.metaTitleAz : 'Google Meta — PROXIMART') : 'Google Meta — PROXIMART'
     },
@@ -342,6 +400,15 @@ export default {
   methods: {
     ...mapMutations(['setActiveLang']),
 
+    onKeywordsChange (key, value) {
+      const keywords = value.replaceAll(' ', '').split(',')
+      this.$set(this, key, keywords.slice(0, 10).join(', '))
+    },
+
+    getKeywordsLength (keywords) {
+      return typeof keywords === 'string' ? (keywords.length ? keywords.replaceAll(' ', '').split(',').length : 0) : 0
+    },
+
     toggleShowPreviews () {
       this.showPreviews = !this.showPreviews
     },
@@ -352,6 +419,8 @@ export default {
         this.metaTitleAz = this.initialData.meta_title__az ?? ''
         this.metaDescription = this.initialData.meta_description ?? ''
         this.metaDescriptionAz = this.initialData.meta_description__az ?? ''
+        this.description = this.initialData.description ?? ''
+        this.descriptionAz = this.initialData.description__az ?? ''
         this.metaKeywords = this.initialData.meta_keywords ?? ''
         this.metaKeywordsAz = this.initialData.meta_keywords__az ?? ''
         this.metaImageUrl = this.initialData.meta_image?.url ?? ''
@@ -388,7 +457,11 @@ export default {
         twitter_description__az: this.twitterDescriptionAz,
         meta_image: this.metaImageFile || this.metaImageUrl,
         facebook_image: this.facebookImageFile || this.facebookImageUrl,
-        twitter_image: this.twitterImageFile || this.twitterImageUrl
+        twitter_image: this.twitterImageFile || this.twitterImageUrl,
+        ...(this.isMetaEditPage ? {
+          description: this.description,
+          description__az: this.descriptionAz
+        } : {})
       }
 
       this.$emit('submit', data)

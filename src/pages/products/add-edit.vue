@@ -777,7 +777,7 @@ export default {
         if (this.category) {
           this.fetchAllParameters(this.productId)
             .then(res => {
-              this.parameters = {
+              this.$set(this, 'parameters', {
                 ...this.parameters,
                 items: res.data.map(i => ({
                   ...i,
@@ -785,7 +785,7 @@ export default {
                   value__az: i.value?.[0]?.value__az || '',
                   relationId: i.value?.[0]?.id || null
                 }))
-              }
+              })
               resolve(res)
             })
             .catch(e => {
@@ -808,9 +808,21 @@ export default {
             product: parseInt(this.productId)
           }))
         })
-          .then(() => {
+          .then((res) => {
             this.$toasted.success('Product\'s parameters were successfully saved')
             this.dataUpdatedParameters = false
+            if (res?.data?.length) {
+              const parametersItems = this.parameters?.items?.slice()
+              res.data.forEach(value => {
+                const item = parametersItems.find(pi => pi.id === value.parameter.id)
+                if (item) {
+                  item.relationId = value.id
+                  item.value = value.value
+                  item.value__az = value.value__az
+                }
+              })
+              this.$set(this.parameters, 'items', parametersItems)
+            }
           })
           .catch(e => {
             console.error(e)

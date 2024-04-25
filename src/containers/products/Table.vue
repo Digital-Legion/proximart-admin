@@ -34,6 +34,7 @@
           <div v-else class="g-table__cell">
             <custom-input
               v-model="newProductNameAz"
+              @input="onNameAzInput"
             />
           </div>
         </template>
@@ -47,6 +48,19 @@
             <custom-input
               v-model="newProductSlug"
               @input="onSlugInput"
+            />
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column
+        label="Slug AZ"
+      >
+        <template slot-scope="props">
+          <span v-if="!props.row.new">{{ props.row.slug__az }}</span>
+          <div v-else class="g-table__cell">
+            <custom-input
+              v-model="newProductSlugAz"
+              @input="onSlugAzInput"
             />
           </div>
         </template>
@@ -95,6 +109,10 @@ export default {
     creatingNew: {
       type: Boolean,
       default: false
+    },
+    filters: {
+      type: Object,
+      default: () => {}
     }
   },
 
@@ -107,14 +125,16 @@ export default {
       newProductName: '',
       newProductNameAz: '',
       newProductSlug: '',
+      newProductSlugAz: '',
 
-      slugBasedOnName: true
+      slugBasedOnName: true,
+      slugBasedOnNameAz: true
     }
   },
 
   async created () {
     this.loading = true
-    await this.fetchProducts(this.page)
+    await this.fetchProducts({ page: this.page, filters: this.filters })
     this.loading = false
   },
 
@@ -123,11 +143,23 @@ export default {
       this.debounceFetch()
     },
 
+    filters: {
+      deep: true,
+      handler () {
+        if (this.page !== 1) {
+          this.page = 1
+        } else {
+          this.debounceFetch()
+        }
+      }
+    },
+
     creatingNew () {
       this.slugBasedOnName = true
       this.newProductName = ''
       this.newProductNameAz = ''
       this.newProductSlug = ''
+      this.newProductSlugAz = ''
     }
   },
 
@@ -142,7 +174,8 @@ export default {
           id: 'NEW',
           name: '',
           name__az: '',
-          slug: ''
+          slug: '',
+          slug__az: ''
         })
       return data
     },
@@ -157,7 +190,7 @@ export default {
 
     debounceFetch: debounce(async function () {
       this.loading = true
-      await this.fetchProducts(this.page)
+      await this.fetchProducts({ page: this.page, filters: this.filters })
       this.loading = false
     }, 200),
 
@@ -194,12 +227,13 @@ export default {
         await this.createProduct({
           name: this.newProductName,
           name__az: this.newProductNameAz,
-          slug: this.newProductSlug
+          slug: this.newProductSlug,
+          slug__az: this.newProductSlugAz
         }).then(() => {
           this.$emit('set-creating-new', false)
           if (this.page !== 1)
             this.page = 1
-          else this.fetchProducts(this.page)
+          else this.fetchProducts({ page: this.page, filters: this.filters })
         }).catch(e => {
           this.$toasted.error(e.response.data.error || e.response.data.message)
         })
@@ -212,6 +246,7 @@ export default {
       this.newProductName = ''
       this.newProductNameAz = ''
       this.newProductSlug = ''
+      this.newProductSlugAz = ''
     },
 
     onNameInput (name) {
@@ -220,8 +255,18 @@ export default {
       }
     },
 
+    onNameAzInput (name) {
+      if (this.slugBasedOnNameAz) {
+        this.newProductSlugAz = slugify(name).toLowerCase()
+      }
+    },
+
     onSlugInput () {
       this.slugBasedOnName = false
+    },
+
+    onSlugAzInput () {
+      this.slugBasedOnNameAz = false
     }
   }
 }

@@ -68,6 +68,30 @@
                 <span>Leads</span>
               </router-link>
             </li>
+            <li>
+              <router-link to="/static" class="g-sidebar__nav-item" :class="{'router-link-exact-active': $route.path.startsWith('/static')}">
+                <font-awesome-icon icon="folder-plus" class="g-sidebar__nav-icon" />
+                <span>Static</span>
+              </router-link>
+            </li>
+            <li>
+              <router-link to="/metas" class="g-sidebar__nav-item" :class="{'router-link-exact-active': $route.path.startsWith('/meta')}">
+                <meta-icon class="g-sidebar__nav-icon"></meta-icon>
+                <span>Meta</span>
+              </router-link>
+            </li>
+            <li>
+              <router-link to="/pages" class="g-sidebar__nav-item" :class="{'router-link-exact-active': $route.path.startsWith('/pages')}">
+                <font-awesome-icon icon="file-word" class="g-sidebar__nav-icon"></font-awesome-icon>
+                <span>Pages</span>
+              </router-link>
+            </li>
+            <li>
+              <router-link to="/settings" class="g-sidebar__nav-item" :class="{'router-link-exact-active': $route.path.startsWith('/settings')}">
+                <font-awesome-icon icon="cogs" class="g-sidebar__nav-icon"></font-awesome-icon>
+                <span>Settings</span>
+              </router-link>
+            </li>
           </ul>
         </nav>
         <div class="g-sidebar__toggler" @click="toggleMenu" v-if="isMobile()">
@@ -80,6 +104,7 @@
 
 <script>
 import IsMobile from '@/mixins/IsMobile'
+import MetaIcon from '@/assets/media/svg/MetaIcon.vue'
 import { mapMutations, mapState } from 'vuex'
 
 export default {
@@ -92,6 +117,9 @@ export default {
       menuOpen: false,
       mobileMenuInit: false
     }
+  },
+  components: {
+    MetaIcon
   },
 
   mounted () {
